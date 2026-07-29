@@ -374,3 +374,104 @@ footer a { color: #888; text-decoration: none; }
 }
 #cookie-banner p { margin: 0; font-size: 13px; color: #ccc; }
 #cookie-banner .small { padding: 8px 18px; font-size: 13px; margin: 0; }
+/* --- SEO CONTENT SECTION STYLING --- */
+.seo-content-container {
+  max-width: 1100px;
+  margin: 60px auto 40px auto;
+  padding: 0 30px;
+  color: #ccc;
+  position: relative;
+  z-index: 20;
+}
+
+.seo-content-container h1 {
+  font-size: 32px;
+  color: #fff;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.seo-lead {
+  font-size: 18px;
+  color: var(--purple-glow);
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 40px auto;
+  line-height: 1.6;
+}
+
+.seo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+  margin-bottom: 50px;
+}
+
+.seo-card {
+  background: rgba(25, 25, 25, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 25px;
+  backdrop-filter: blur(5px);
+}
+
+.seo-card h2 {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 20px;
+  color: #fff;
+  margin-bottom: 12px;
+}
+
+.seo-card p {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #aaa;
+}
+
+.seo-faq-section {
+  background: rgba(20, 20, 20, 0.8);
+  border: 1px solid rgba(207, 150, 253, 0.15);
+  border-radius: 24px;
+  padding: 40px;
+  margin-top: 30px;
+}
+
+.seo-faq-section h2 {
+  font-size: 28px;
+  color: #fff;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.faq-item {
+  margin-bottom: 25px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 20px;
+}
+
+.faq-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.faq-item h3 {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 18px;
+  color: var(--cyan-glow);
+  margin-bottom: 8px;
+}
+
+.faq-item p {
+  font-size: 14px;
+  color: #bbb;
+  line-height: 1.6;
+}
+
+.faq-item code {
+  background: rgba(207, 150, 253, 0.1);
+  color: var(--purple-glow);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+}
