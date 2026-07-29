@@ -19,6 +19,9 @@ const versionSelector = document.getElementById('version-selector');
 const executeAdvancedBtn = document.getElementById('execute-advanced-btn');
 const closeButtons = document.querySelectorAll('.close-modal');
 
+const trickWarning = document.getElementById('trick-warning');
+const trickDetails = document.getElementById('trick-details');
+
 // --- STATO GLOBALE ---
 let isAdvancedMode = false;
 let currentPendingFile = null;
@@ -190,22 +193,30 @@ setupDropzone(dropzoneHome, async (file, ext) => {
   await triggerEngine(file, isAe ? version : null, !isAe ? version : null);
 });
 
-// Drop su ADVANCED (AE)
+// Drop su ADVANCED (AE Side)
 setupDropzone(dropzoneAe, (file, ext) => {
-  if(!['aep', 'aepx'].includes(ext)) { showErrorState(); return; }
-  openAdvancedModal(file, 'ae');
+  const isPr = ext === 'prproj';
+  openAdvancedModal(file, isPr ? 'pr' : 'ae', isPr);
 });
 
-// Drop su ADVANCED (PR)
+// Drop su ADVANCED (PR Side)
 setupDropzone(dropzonePr, (file, ext) => {
-  if(ext !== 'prproj') { showErrorState(); return; }
-  openAdvancedModal(file, 'pr');
+  const isAe = ['aep', 'aepx'].includes(ext);
+  openAdvancedModal(file, isAe ? 'ae' : 'pr', isAe);
 });
 
 // --- 7. MODAL & ESECUZIONE ---
-function openAdvancedModal(file, type) {
+function openAdvancedModal(file, actualType, wasTricked = false) {
   currentPendingFile = file;
   
+  if (wasTricked) {
+    const typeName = actualType === 'ae' ? 'After Effects (.aep)' : 'Premiere Pro (.prproj)';
+    trickDetails.innerText = `You dropped this into the wrong box, but I auto-detected it as ${typeName}!`;
+    trickWarning.classList.remove('hidden');
+  } else {
+    trickWarning.classList.add('hidden');
+  }
+
   const sizeMb = (file.size / (1024*1024)).toFixed(2);
   const date = new Date(file.lastModified).toLocaleString();
   metadataBox.innerHTML = `
@@ -214,7 +225,7 @@ function openAdvancedModal(file, type) {
     <strong>Last Modified:</strong> ${date}
   `;
 
-  renderModalBubbleNav(type);
+  renderModalBubbleNav(actualType);
   advancedModal.classList.remove('hidden');
 }
 

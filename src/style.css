@@ -348,7 +348,7 @@ main {
 .pane-content { text-align: center; }
 .app-icon { width: 85px; height: 90px; margin: 0 auto 20px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.2)); }
 
-/* SEO CONTENT SECTION STYLING (SOTTO LA VIEWPORT) */
+/* SEO CONTENT SECTION STYLING */
 .seo-content-container {
   max-width: 1100px;
   margin: 80px auto 40px auto;
@@ -475,7 +475,7 @@ main {
 .error-content p { font-size: 22px; font-weight: bold; }
 #error-countdown { font-size: 55px; font-weight: 800; margin-top: 20px; font-family: "Space Grotesk", sans-serif; }
 
-/* MODALS */
+/* MODALS & POP-UP CLEANUP */
 .hidden { display: none !important; }
 
 .modal-overlay { 
@@ -486,15 +486,47 @@ main {
   display: flex; align-items: center; justify-content: center; 
 }
 
+/* Glass panel pulito: nessun bordo verdino, azzerati gli outline/focus */
 .glass-panel {
-  background: rgba(25, 25, 25, 0.75); 
-  border: 1px solid rgba(255, 255, 25, 0.12);
+  background: rgba(25, 25, 25, 0.85); 
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 24px; padding: 40px; 
-  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.7);
   position: relative; width: 90%; max-width: 520px; text-align: center;
+  outline: none !important;
 }
 
-.close-modal { position: absolute; top: 20px; right: 20px; background: none; border: none; color: #fff; font-size: 28px; }
+.glass-panel:focus, .glass-panel:focus-visible {
+  outline: none !important;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.7) !important;
+}
+
+.close-modal { position: absolute; top: 20px; right: 20px; background: none; border: none; color: #fff; font-size: 28px; outline: none; }
+
+/* TRICK WARNING BOX (Auto-correzione drop errato) */
+.trick-warning-box {
+  background: rgba(238, 99, 82, 0.15);
+  border: 1px solid rgba(238, 99, 82, 0.4);
+  border-radius: 12px;
+  padding: 12px 18px;
+  margin-bottom: 20px;
+  color: #ff9988;
+  font-size: 14px;
+}
+
+.trick-warning-box span {
+  font-family: "Pixelify Sans", sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffaa99;
+  display: block;
+}
+
+.trick-warning-box p {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #e0e0e0;
+}
 
 .metadata-box { 
   background: rgba(0,0,0,0.45); 
@@ -509,6 +541,7 @@ main {
   font-size: 17px; border-radius: 100px; font-weight: 700; margin-top: 15px;
   transition: transform 0.2s, box-shadow 0.2s;
   display: inline-block; text-decoration: none;
+  outline: none;
 }
 .primary-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(8, 178, 227, 0.4); }
 

@@ -132,7 +132,7 @@
     </div>
   </header>
 
-  <!-- ERROR OVERLAY (Red Alert) -->
+  <!-- ERROR OVERLAY (Red Alert per file totalmente non supportati es. .jpg, .zip) -->
   <div id="error-overlay" class="hidden">
     <div class="error-content">
       <h1 class="pixelify-sans">WRONG FILE!</h1>
@@ -143,7 +143,7 @@
 
   <main id="app-container">
     
-    <!-- VIEW 1: HOME (Simple Quick Drop Centrato e Pulito) -->
+    <!-- VIEW 1: HOME (Simple Quick Drop) -->
     <section id="view-home" class="view active">
       <div id="dropzone-home" class="dropzone-giant animated-border">
         <h1 class="space-grotesk giant-text">DOWNGRADE EVERYTHING<br><span class="glow-text">Drop the goods</span></h1>
@@ -176,7 +176,7 @@
 
   </main>
 
-  <!-- SEO CONTENT SECTION (Posizionata Sotto lo Scroll) -->
+  <!-- SEO CONTENT SECTION -->
   <article id="more-info" class="seo-content-container">
     <header>
       <h2 class="space-grotesk main-seo-title">Free Premiere Pro & After Effects Project Downgrader</h2>
@@ -230,6 +230,13 @@
   <div id="advanced-modal" class="modal-overlay hidden">
     <div class="modal glass-panel">
       <button class="close-modal">&times;</button>
+      
+      <!-- Warning per auto-correzione drop errato -->
+      <div id="trick-warning" class="trick-warning-box hidden">
+        <span>You tried to trick me, hey! 😉</span>
+        <p id="trick-details"></p>
+      </div>
+
       <h2 class="space-grotesk">Target Version</h2>
       
       <div id="file-metadata" class="metadata-box"></div>
