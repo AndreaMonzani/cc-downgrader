@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CC Downgrader | Downgrade Everything</title>
+  
+  <!-- Fonts: Space Grotesk, Geist, Pixelify Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..900&family=Pixelify+Sans:wght@400..700&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Grain Overlay Ultra-Fine -->
+  <div id="noise-overlay"></div>
+
+  <!-- Custom Cursor -->
+  <div id="cursor-dot"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- Header Completo -->
+  <header class="top-bar">
+    <div class="header-left">
+      <div class="logo space-grotesk">CC Downgrader</div>
+      <button id="toggle-mode-btn" class="button">
+        <div class="text">I'm a pro, let's go to advanced mode!</div>
+      </button>
+    </div>
+
+    <!-- Header Right: Pill Nav -->
+    <div class="header-right">
+      <div class="nav-wrap top-nav-wrap">
+        <div class="bubble top-bubble"></div>
+        <nav class="nav top-nav" id="header-nav">
+          <a href="https://home.andreamonzani.com/" target="_blank" rel="noopener" class="nav-link">Portfolio 🎬</a>
+          <a href="https://py.pl/3zyJvKFbXmb6KEVIrM9OSg" target="_blank" rel="noopener" class="nav-link highlight-link">Coffee ☕</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- ERROR OVERLAY (Red Alert) -->
+  <div id="error-overlay" class="hidden">
+    <div class="error-content">
+      <h1 class="pixelify-sans">WRONG FILE!</h1>
+      <p>Make sure you upload only PRPROJ or AEP files.</p>
+      <div id="error-countdown">5</div>
+    </div>
+  </div>
+
+  <main id="app-container">
+    
+    <!-- VIEW 1: HOME (Simple Quick Drop Centrato) -->
+    <section id="view-home" class="view active">
+      <div id="dropzone-home" class="dropzone-giant animated-border">
+        <h1 class="space-grotesk giant-text">DOWNGRADE EVERYTHING<br><span class="glow-text">Drop the goods</span></h1>
+      </div>
+    </section>
+
+    <!-- VIEW 2: ADVANCED (Split Screen 50/50) -->
+    <section id="view-advanced" class="view hidden">
+      <div class="split-container">
+        <!-- AE Side -->
+        <div id="dropzone-ae" class="split-pane ae-pane animated-border">
+          <div class="pane-content">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/cb/Adobe_After_Effects_CC_icon.svg" alt="After Effects" class="app-icon">
+            <h2 class="space-grotesk">Drop After Effects (.aep)</h2>
+          </div>
+        </div>
+        <!-- PR Side -->
+        <div id="dropzone-pr" class="split-pane pr-pane animated-border">
+          <div class="pane-content">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/4/40/Adobe_Premiere_Pro_CC_icon.svg" alt="Premiere Pro" class="app-icon">
+            <h2 class="space-grotesk">Drop Premiere Pro (.prproj)</h2>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: ADVANCED OPTIONS & METADATA -->
+  <div id="advanced-modal" class="modal-overlay hidden">
+    <div class="modal glass-panel">
+      <button class="close-modal">&times;</button>
+      <h2 class="space-grotesk">Target Version</h2>
+      
+      <div id="file-metadata" class="metadata-box"></div>
+
+      <div class="nav-wrap modal-nav-wrap">
+        <div class="bubble modal-bubble"></div>
+        <div class="nav" id="version-selector"></div>
+      </div>
+
+      <button id="execute-advanced-btn" class="primary-btn space-grotesk">Downgrade Now</button>
+    </div>
+  </div>
+
+  <!-- MODAL: DONATIONS -->
+  <div id="coffee-modal" class="modal-overlay hidden">
+    <div class="modal glass-panel coffee-panel">
+      <button class="close-modal">&times;</button>
+      <h1 class="pixelify-sans">Hey! ☕</h1>
+      <p>You have been enjoying my tool!<br>Buy me a coffee or a beer 🍺</p>
+      <a href="https://py.pl/3zyJvKFbXmb6KEVIrM9OSg" target="_blank" class="primary-btn space-grotesk pulse-btn">Donate via PayPal</a>
+    </div>
+  </div>
+
+  <!-- Ethical Ad Space -->
+  <div id="ad-container" class="ad-space">
+    <span>Ethical Ad Space</span>
+  </div>
+
+  <!-- Cookie Banner -->
+  <div id="cookie-banner" class="glass-panel">
+    <p>We use cookies to improve your experience and monitor traffic via Google Analytics. <a href="#">Privacy Policy</a></p>
+    <button id="accept-cookies" class="primary-btn small">Accept</button>
+  </div>
+
+  <!-- Footer Legal Info -->
+  <footer>
+    <p>© 2026 Andrea Maria Serghei Monzani · Busnago 20874 (MB) · P.IVA 14532680965 · <a href="mailto:andrea.monzani99@pec.it">andrea.monzani99@pec.it</a> | <a href="#">Privacy Policy</a></p>
+  </footer>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
