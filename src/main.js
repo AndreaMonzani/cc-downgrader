@@ -252,13 +252,26 @@ async function triggerEngine(file, aeVersion, prVersion) {
   }
 }
 
-// Cookie Banner
+// --- 9. COOKIE BANNER & GA4 CONSENT ---
 const cookieBanner = document.getElementById('cookie-banner');
-if(!localStorage.getItem('cookies_accepted')) {
+
+if (!localStorage.getItem('cookies_accepted')) {
   document.getElementById('accept-cookies').addEventListener('click', () => {
     localStorage.setItem('cookies_accepted', 'true');
-    cookieBanner.style.display = 'none';
+    if (cookieBanner) cookieBanner.style.display = 'none';
+    
+    // Sblocca il tracciamento di Google Analytics dopo il consenso
+    if (typeof window.gtag === 'function') {
+      window.gtag('consent', 'update', {
+        'analytics_storage': 'granted'
+      });
+    }
   });
 } else {
-  if(cookieBanner) cookieBanner.style.display = 'none';
+  if (cookieBanner) cookieBanner.style.display = 'none';
+  if (typeof window.gtag === 'function') {
+    window.gtag('consent', 'update', {
+      'analytics_storage': 'granted'
+    });
+  }
 }

@@ -191,11 +191,19 @@ body.hovering #cursor-ring {
   font-family: "Space Grotesk", sans-serif; 
   font-weight: 600; 
   font-size: 13px;
-  transition: color 0.3s;
+  transition: color 0.2s ease;
+  z-index: 10;
 }
 
-.nav a:hover, .nav a.active { color: #fff; }
-.nav a.active { color: #000; }
+/* Fix contrasto: testo violetto scuro/nero al passaggio sopra la bolla bianca */
+.nav a:hover { 
+  color: #231123 !important; 
+  font-weight: 700;
+}
+
+.nav a.active { 
+  color: #000 !important; 
+}
 
 .bubble {
   position: absolute; 
