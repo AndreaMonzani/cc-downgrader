@@ -25,6 +25,17 @@ let currentPendingFile = null;
 let currentTargetVersion = null;
 let errorTimer = null;
 
+// --- LOGO CLICK: GLOW & REFRESH ---
+const logoEl = document.querySelector('.logo');
+if (logoEl) {
+  logoEl.addEventListener('click', () => {
+    logoEl.classList.add('logo-click-glow');
+    setTimeout(() => {
+      window.location.reload();
+    }, 350);
+  });
+}
+
 // --- 1. CURSORE CUSTOM & SFONDO DINAMICO ---
 const dot = document.getElementById('cursor-dot');
 const ring = document.getElementById('cursor-ring');
@@ -260,7 +271,6 @@ if (!localStorage.getItem('cookies_accepted')) {
     localStorage.setItem('cookies_accepted', 'true');
     if (cookieBanner) cookieBanner.style.display = 'none';
     
-    // Sblocca il tracciamento di Google Analytics dopo il consenso
     if (typeof window.gtag === 'function') {
       window.gtag('consent', 'update', {
         'analytics_storage': 'granted'
