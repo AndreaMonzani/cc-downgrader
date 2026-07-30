@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
+  <!-- FAVICON & GOOGLE LOGO (512x512 PNG) -->
+  <link rel="icon" type="image/png" sizes="512x512" href="/src/assets/favicon_cc.png" />
+  <link rel="apple-touch-icon" sizes="512x512" href="/src/assets/favicon_cc.png" />
+
   <!-- Primary SEO Meta Tags -->
   <title>Free Premiere Pro & After Effects Project Downgrader Online</title>
   <meta name="title" content="Free Premiere Pro & After Effects Project Downgrader Online" />
@@ -17,14 +21,14 @@
   <meta property="og:url" content="https://cc.andreamonzani.com/" />
   <meta property="og:title" content="Free Premiere Pro & After Effects Project Downgrader" />
   <meta property="og:description" content="Convert .prproj and .aep files to older Adobe CC versions in seconds. Free, secure, 100% client-side online tool." />
-  <meta property="og:image" content="https://cc.andreamonzani.com/og-image.png" />
+  <meta property="og:image" content="https://cc.andreamonzani.com/src/assets/favicon_cc.png" />
 
   <!-- Twitter / X -->
   <meta property="twitter:card" content="summary_large_image" />
   <meta property="twitter:url" content="https://cc.andreamonzani.com/" />
   <meta property="twitter:title" content="Free Premiere Pro & After Effects Project Downgrader" />
   <meta property="twitter:description" content="Convert .prproj and .aep files to older Adobe CC versions in seconds. Free, secure, 100% client-side online tool." />
-  <meta property="twitter:image" content="https://cc.andreamonzani.com/og-image.png" />
+  <meta property="twitter:image" content="https://cc.andreamonzani.com/src/assets/favicon_cc.png" />
 
   <!-- Fonts: Space Grotesk, Geist, Pixelify Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -45,7 +49,7 @@
     gtag('config', 'G-DE0J4XY6DJ');
   </script>
 
-  <!-- Structured Data (JSON-LD) for Google Rich Snippets -->
+  <!-- Structured Data (JSON-LD) per Software e Logo Google -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -53,12 +57,22 @@
     "name": "CC Downgrader",
     "operatingSystem": "All",
     "applicationCategory": "MultimediaApplication",
+    "image": "https://cc.andreamonzani.com/src/assets/favicon_cc.png",
     "offers": {
       "@type": "Offer",
       "price": "0",
       "priceCurrency": "USD"
     },
     "description": "Free online utility to downgrade Adobe Premiere Pro (.prproj) and After Effects (.aep) project files to older versions without uploading files to a server."
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "url": "https://cc.andreamonzani.com/",
+    "logo": "https://cc.andreamonzani.com/src/assets/favicon_cc.png"
   }
   </script>
 
@@ -120,20 +134,21 @@
       </button>
     </div>
 
-    <!-- Header Right: Pill Nav con Link GitHub Open Source -->
+    <!-- Header Right: Pill Nav con Google Form Bug Report -->
     <div class="header-right">
       <div class="nav-wrap top-nav-wrap">
         <div class="bubble top-bubble"></div>
         <nav class="nav top-nav" id="header-nav">
           <a href="https://home.andreamonzani.com/" target="_blank" rel="noopener" class="nav-link">Portfolio 🎬</a>
           <a href="https://github.com/AndreaMonzani/cc-downgrader" target="_blank" rel="noopener" class="nav-link">GitHub 💻</a>
+          <a href="https://forms.gle/9i8FuKm69uu4tNx4A" target="_blank" rel="noopener" class="nav-link">Report Bug 🐛</a>
           <a href="https://py.pl/3zyJvKFbXmb6KEVIrM9OSg" target="_blank" rel="noopener" class="nav-link highlight-link">Coffee ☕</a>
         </nav>
       </div>
     </div>
   </header>
 
-  <!-- ERROR OVERLAY (Red Alert per file non supportati) -->
+  <!-- ERROR OVERLAY (Red Alert) -->
   <div id="error-overlay" class="hidden">
     <div class="error-content">
       <h1 class="pixelify-sans">WRONG FILE!</h1>
@@ -237,8 +252,17 @@
         <p id="trick-details"></p>
       </div>
 
-      <h2 class="space-grotesk">Target Version</h2>
-      
+      <!-- Option: Custom Output Name -->
+      <div class="input-group">
+        <label for="custom-file-name" class="space-grotesk">Output File Name</label>
+        <div class="input-wrapper">
+          <input type="text" id="custom-file-name" class="glass-input" placeholder="project_downgraded">
+          <span id="file-ext-label" class="ext-tag">.prproj</span>
+        </div>
+      </div>
+
+      <h3 class="space-grotesk section-subtitle">Target Version</h3>
+
       <div id="file-metadata" class="metadata-box"></div>
 
       <div class="nav-wrap modal-nav-wrap">

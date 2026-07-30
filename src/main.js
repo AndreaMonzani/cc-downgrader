@@ -21,11 +21,14 @@ const closeButtons = document.querySelectorAll('.close-modal');
 
 const trickWarning = document.getElementById('trick-warning');
 const trickDetails = document.getElementById('trick-details');
+const customFileNameInput = document.getElementById('custom-file-name');
+const fileExtLabel = document.getElementById('file-ext-label');
 
 // --- STATO GLOBALE ---
 let isAdvancedMode = false;
 let currentPendingFile = null;
 let currentTargetVersion = null;
+let currentFileExt = '';
 let errorTimer = null;
 
 // --- LOGO CLICK: GLOW & REFRESH ---
@@ -70,7 +73,7 @@ function renderCursor() {
 requestAnimationFrame(renderCursor);
 
 // Hover magnetico
-document.querySelectorAll('button, a, .split-pane, .dropzone-giant, .nav-link').forEach(el => {
+document.querySelectorAll('button, a, .split-pane, .dropzone-giant, .nav-link, input').forEach(el => {
   el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
   el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
 });
@@ -209,6 +212,13 @@ setupDropzone(dropzonePr, (file, ext) => {
 function openAdvancedModal(file, actualType, wasTricked = false) {
   currentPendingFile = file;
   
+  const lastDotIdx = file.name.lastIndexOf('.');
+  const baseName = lastDotIdx !== -1 ? file.name.substring(0, lastDotIdx) : file.name;
+  currentFileExt = lastDotIdx !== -1 ? file.name.substring(lastDotIdx) : (actualType === 'ae' ? '.aep' : '.prproj');
+  
+  customFileNameInput.value = `${baseName}_downgraded`;
+  fileExtLabel.innerText = currentFileExt;
+
   if (wasTricked) {
     const typeName = actualType === 'ae' ? 'After Effects (.aep)' : 'Premiere Pro (.prproj)';
     trickDetails.innerText = `You dropped this into the wrong box, but I auto-detected it as ${typeName}!`;
@@ -220,9 +230,8 @@ function openAdvancedModal(file, actualType, wasTricked = false) {
   const sizeMb = (file.size / (1024*1024)).toFixed(2);
   const date = new Date(file.lastModified).toLocaleString();
   metadataBox.innerHTML = `
-    <strong>Name:</strong> ${file.name}<br>
-    <strong>Size:</strong> ${sizeMb} MB<br>
-    <strong>Last Modified:</strong> ${date}
+    <strong>Original Name:</strong> ${file.name}<br>
+    <strong>Size:</strong> ${sizeMb} MB | <strong>Modified:</strong> ${date}
   `;
 
   renderModalBubbleNav(actualType);
@@ -242,20 +251,28 @@ executeAdvancedBtn.addEventListener('click', async () => {
   const aeVer = isAe ? currentTargetVersion : null;
   const prVer = !isAe ? currentTargetVersion : null;
   
-  await triggerEngine(currentPendingFile, aeVer, prVer);
+  let chosenName = customFileNameInput.value.trim();
+  if (!chosenName) chosenName = "project_downgraded";
+  if (!chosenName.toLowerCase().endsWith(currentFileExt.toLowerCase())) {
+    chosenName += currentFileExt;
+  }
+
+  await triggerEngine(currentPendingFile, aeVer, prVer, chosenName);
 });
 
 // --- 8. CONVERSIONE E DONAZIONI ---
-async function triggerEngine(file, aeVersion, prVersion) {
+async function triggerEngine(file, aeVersion, prVersion, customOutputName = null) {
   if(ring) ring.style.borderColor = "#08B2E3";
   document.body.style.cursor = "wait";
 
   try {
     const result = await processFile(file, { aeVersion, prVersion });
     
+    const downloadName = customOutputName || result.filename;
+
     const a = document.createElement('a');
     a.href = URL.createObjectURL(result.blob);
-    a.download = result.filename;
+    a.download = downloadName;
     a.click();
 
     let count = parseInt(localStorage.getItem('downgrade_count') || '0');
