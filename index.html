@@ -30,12 +30,15 @@
   <meta property="twitter:description" content="Convert .prproj and .aep files to older Adobe CC versions in seconds. Free, secure, 100% client-side online tool." />
   <meta property="twitter:image" content="https://cc.andreamonzani.com/src/assets/favicon_cc.png" />
 
-  <!-- Fonts: Space Grotesk, Geist, Pixelify Sans -->
+  <!-- Performance Preconnect Hints -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://upload.wikimedia.org" crossorigin>
+
+  <!-- Fonts Ottimizzati con display=swap per evitare il blocco del rendering -->
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..900&family=Pixelify+Sans:wght@400..700&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
 
-  <!-- Google tag (gtag.js) - Google Analytics 4 -->
+  <!-- Google tag (gtag.js) - Google Analytics 4 (Con caricamento differito per performance) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-DE0J4XY6DJ"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -129,7 +132,7 @@
   <header class="top-bar">
     <div class="header-left">
       <div class="logo space-grotesk">CC Downgrader</div>
-      <button id="toggle-mode-btn" class="button">
+      <button id="toggle-mode-btn" class="button" aria-label="Toggle Advanced Mode">
         <div class="text">I'm a pro, let's go to advanced mode!</div>
       </button>
     </div>
@@ -164,7 +167,7 @@
       <div id="dropzone-home" class="dropzone-giant animated-border">
         <h1 class="space-grotesk giant-text">DOWNGRADE EVERYTHING<br><span class="glow-text">Drop the goods</span></h1>
       </div>
-      <a href="#more-info" class="scroll-indicator">
+      <a href="#more-info" class="scroll-indicator" aria-label="Learn more and FAQ">
         <span>Learn more & FAQ</span>
         <div class="scroll-arrow">↓</div>
       </a>
@@ -176,14 +179,14 @@
         <!-- AE Side -->
         <div id="dropzone-ae" class="split-pane ae-pane animated-border">
           <div class="pane-content">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/c/cb/Adobe_After_Effects_CC_icon.svg" alt="After Effects project converter" class="app-icon">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/cb/Adobe_After_Effects_CC_icon.svg" alt="After Effects project converter" class="app-icon" width="85" height="90" loading="lazy">
             <h2 class="space-grotesk">Drop After Effects (.aep)</h2>
           </div>
         </div>
         <!-- PR Side -->
         <div id="dropzone-pr" class="split-pane pr-pane animated-border">
           <div class="pane-content">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/4/40/Adobe_Premiere_Pro_CC_icon.svg" alt="Premiere Pro project downgrade tool" class="app-icon">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/4/40/Adobe_Premiere_Pro_CC_icon.svg" alt="Premiere Pro project downgrade tool" class="app-icon" width="85" height="90" loading="lazy">
             <h2 class="space-grotesk">Drop Premiere Pro (.prproj)</h2>
           </div>
         </div>
@@ -243,9 +246,9 @@
   </article>
 
   <!-- MODAL: ADVANCED OPTIONS & METADATA -->
-  <div id="advanced-modal" class="modal-overlay hidden">
+  <div id="advanced-modal" class="modal-overlay hidden" role="dialog" aria-labelledby="modal-title" aria-modal="true">
     <div class="modal glass-panel">
-      <button class="close-modal">&times;</button>
+      <button class="close-modal" aria-label="Close modal">&times;</button>
       
       <div id="trick-warning" class="trick-warning-box hidden">
         <span>You tried to trick me, hey! 😉</span>
@@ -261,7 +264,7 @@
         </div>
       </div>
 
-      <h3 class="space-grotesk section-subtitle">Target Version</h3>
+      <h3 id="modal-title" class="space-grotesk section-subtitle">Target Version</h3>
 
       <div id="file-metadata" class="metadata-box"></div>
 
@@ -275,12 +278,12 @@
   </div>
 
   <!-- MODAL: DONATIONS -->
-  <div id="coffee-modal" class="modal-overlay hidden">
+  <div id="coffee-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
     <div class="modal glass-panel coffee-panel">
-      <button class="close-modal">&times;</button>
+      <button class="close-modal" aria-label="Close modal">&times;</button>
       <h1 class="pixelify-sans">Hey! 🍺</h1>
       <p>You have been enjoying my tool!<br>Buy me a beer 🍺</p>
-      <a href="https://py.pl/3zyJvKFbXmb6KEVIrM9OSg" target="_blank" class="primary-btn space-grotesk pulse-btn">Donate via PayPal</a>
+      <a href="https://py.pl/3zyJvKFbXmb6KEVIrM9OSg" target="_blank" rel="noopener" class="primary-btn space-grotesk pulse-btn">Donate via PayPal</a>
     </div>
   </div>
 
@@ -295,9 +298,9 @@
     <button id="accept-cookies" class="primary-btn small">Accept</button>
   </div>
 
-  <!-- Footer Legal Info -->
+  <!-- Footer Legal Info (Ottimizzato per Accessibilità e Contrasto) -->
   <footer>
-    <p>© 2026 Andrea Maria Serghei Monzani · Busnago 20874 (MB) · P.IVA 14532680965 · <a href="mailto:andrea.monzani99@pec.it">andrea.monzani99@pec.it</a> | <a href="https://github.com/AndreaMonzani/cc-downgrader" target="_blank" rel="noopener">GitHub Source</a></p>
+    <p>© 2026 Andrea Maria Serghei Monzani · Busnago 20874 (MB) · P.IVA 14532680965 · <a href="mailto:andrea.monzani99@pec.it" class="footer-link">andrea.monzani99@pec.it</a> | <a href="https://github.com/AndreaMonzani/cc-downgrader" target="_blank" rel="noopener" class="footer-link">GitHub Source</a></p>
   </footer>
 
   <script type="module" src="/src/main.js"></script>
