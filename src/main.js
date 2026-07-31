@@ -76,15 +76,15 @@ function renderCursor() {
 }
 requestAnimationFrame(renderCursor);
 
-// Hover magnetico
+// Hover magnetico per desktop
 document.querySelectorAll('button, a, .split-pane, .dropzone-giant, .nav-link, input').forEach(el => {
   el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
   el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
 });
 
 // --- 2. TOGGLE VIEWS (HOME <=> ADVANCED) ---
-toggleBtn.addEventListener('click', () => {
-  isAdvancedMode = !isAdvancedMode;
+function setAdvancedMode(enable) {
+  isAdvancedMode = enable;
   if(isAdvancedMode) {
     viewHome.classList.remove('active');
     viewAdvanced.classList.remove('hidden');
@@ -96,7 +96,37 @@ toggleBtn.addEventListener('click', () => {
     viewHome.classList.add('active');
     toggleBtn.querySelector('.text').innerText = "I'm a pro, let's go to advanced mode!";
   }
-});
+}
+
+toggleBtn.addEventListener('click', () => setAdvancedMode(!isAdvancedMode));
+
+// --- SWIPE GESTURE DETECTOR (INSTAGRAM STYLE FOR MOBILE) ---
+let touchStartX = 0;
+let touchStartY = 0;
+
+window.addEventListener('touchstart', (e) => {
+  touchStartX = e.changedTouches[0].screenX;
+  touchStartY = e.changedTouches[0].screenY;
+}, { passive: true });
+
+window.addEventListener('touchend', (e) => {
+  const touchEndX = e.changedTouches[0].screenX;
+  const touchEndY = e.changedTouches[0].screenY;
+  
+  const diffX = touchEndX - touchStartX;
+  const diffY = touchEndY - touchStartY;
+
+  // Verifica che lo swipe sia orizzontale e maggiore di 60px
+  if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 60) {
+    if (diffX < 0 && !isAdvancedMode) {
+      // Swipe verso sinistra -> Vai ad Advanced Mode
+      setAdvancedMode(true);
+    } else if (diffX > 0 && isAdvancedMode) {
+      // Swipe verso destra -> Torna a Quick Drop
+      setAdvancedMode(false);
+    }
+  }
+}, { passive: true });
 
 // --- 3. BUBBLE NAV MODALE (VERSION SELECTOR) ---
 function renderModalBubbleNav(type) {
@@ -173,9 +203,11 @@ function showErrorState() {
   }, 1000);
 }
 
-// --- 6. DRAG & DROP ENGINE ---
+// --- 6. DRAG & DROP + FILE CLICK FOR MOBILE ---
 function setupDropzone(el, onDropCb) {
   if(!el) return;
+  
+  // Drag & drop standard per desktop
   el.addEventListener('dragover', e => { e.preventDefault(); el.classList.add('drag-over'); });
   el.addEventListener('dragleave', () => el.classList.remove('drag-over'));
   el.addEventListener('drop', e => {
@@ -190,6 +222,25 @@ function setupDropzone(el, onDropCb) {
       return;
     }
     onDropCb(file, ext);
+  });
+
+  // Tocco per selezionare il file da Mobile
+  el.addEventListener('click', (e) => {
+    // Evita di aprire il selettore se l'utente sta facendo scroll
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.prproj, .aep, .aepx';
+    fileInput.onchange = (evt) => {
+      const file = evt.target.files[0];
+      if(!file) return;
+      const ext = file.name.split('.').pop().toLowerCase();
+      if(!['prproj', 'aep', 'aepx'].includes(ext)) {
+        showErrorState();
+        return;
+      }
+      onDropCb(file, ext);
+    };
+    fileInput.click();
   });
 }
 
@@ -295,7 +346,7 @@ async function triggerEngine(file, aeVersion, prVersion, customOutputName = null
     alert("Conversion error: " + error.message);
   } finally {
     if(ring) ring.style.borderColor = "rgba(207, 150, 253, 0.5)";
-    document.body.style.cursor = "none";
+    document.body.style.cursor = "default";
   }
 }
 
