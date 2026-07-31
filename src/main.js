@@ -14,6 +14,10 @@ const errorCountdown = document.getElementById('error-countdown');
 
 const advancedModal = document.getElementById('advanced-modal');
 const coffeeModal = document.getElementById('coffee-modal');
+const adblockModal = document.getElementById('adblock-modal');
+const closeAdblockBtn = document.getElementById('close-adblock');
+const understandAdblockBtn = document.getElementById('understand-adblock-btn');
+
 const metadataBox = document.getElementById('file-metadata');
 const versionSelector = document.getElementById('version-selector');
 const executeAdvancedBtn = document.getElementById('execute-advanced-btn');
@@ -241,7 +245,11 @@ function openAdvancedModal(file, actualType, wasTricked = false) {
 closeButtons.forEach(btn => btn.addEventListener('click', () => {
   advancedModal.classList.add('hidden');
   coffeeModal.classList.add('hidden');
+  adblockModal.classList.add('hidden');
 }));
+
+if (closeAdblockBtn) closeAdblockBtn.addEventListener('click', () => adblockModal.classList.add('hidden'));
+if (understandAdblockBtn) understandAdblockBtn.addEventListener('click', () => adblockModal.classList.add('hidden'));
 
 executeAdvancedBtn.addEventListener('click', async () => {
   advancedModal.classList.add('hidden');
@@ -313,3 +321,28 @@ if (!localStorage.getItem('cookies_accepted')) {
     });
   }
 }
+
+// --- 10. POLITE ADBLOCK DETECTOR ---
+function detectAdBlock() {
+  const adTest = document.createElement('div');
+  adTest.innerHTML = '&nbsp;';
+  adTest.className = 'adsbygoogle ad-zone ad-space google-ad';
+  adTest.style.position = 'absolute';
+  adTest.style.top = '-9999px';
+  adTest.style.left = '-9999px';
+  document.body.appendChild(adTest);
+
+  setTimeout(() => {
+    const isBlocked = adTest.offsetHeight === 0 || 
+                      window.adsbygoogle === undefined || 
+                      adTest.clientHeight === 0;
+    document.body.removeChild(adTest);
+
+    if (isBlocked && !sessionStorage.getItem('adblock_dismissed')) {
+      adblockModal.classList.remove('hidden');
+      sessionStorage.setItem('adblock_dismissed', 'true');
+    }
+  }, 1200);
+}
+
+window.addEventListener('load', detectAdBlock);

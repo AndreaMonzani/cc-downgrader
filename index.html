@@ -35,10 +35,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://upload.wikimedia.org" crossorigin>
 
-  <!-- Fonts Ottimizzati con display=swap per evitare il blocco del rendering -->
+  <!-- Fonts Ottimizzati -->
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..900&family=Pixelify+Sans:wght@400..700&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
 
-  <!-- Google tag (gtag.js) - Google Analytics 4 (Con caricamento differito per performance) -->
+  <!-- GOOGLE ADSENSE SCRIPT -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2940110943660865" crossorigin="anonymous"></script>
+
+  <!-- Google tag (gtag.js) - Google Analytics 4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-DE0J4XY6DJ"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -167,6 +170,19 @@
       <div id="dropzone-home" class="dropzone-giant animated-border">
         <h1 class="space-grotesk giant-text">DOWNGRADE EVERYTHING<br><span class="glow-text">Drop the goods</span></h1>
       </div>
+
+      <!-- BANNER ADSENSE DISCRETO SOTTO LA DROPZONE -->
+      <div class="ad-sub-container">
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-2940110943660865"
+             data-ad-format="horizontal"
+             data-full-width-responsive="true"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+      </div>
+
       <a href="#more-info" class="scroll-indicator" aria-label="Learn more and FAQ">
         <span>Learn more & FAQ</span>
         <div class="scroll-arrow">↓</div>
@@ -190,6 +206,18 @@
             <h2 class="space-grotesk">Drop Premiere Pro (.prproj)</h2>
           </div>
         </div>
+      </div>
+
+      <!-- BANNER ADSENSE IN ADVANCED VIEW -->
+      <div class="ad-sub-container">
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-2940110943660865"
+             data-ad-format="horizontal"
+             data-full-width-responsive="true"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
       </div>
     </section>
 
@@ -287,9 +315,35 @@
     </div>
   </div>
 
-  <!-- Ethical Ad Space -->
+  <!-- MODAL: ADBLOCK DETECTOR (Non-bloccante) -->
+  <div id="adblock-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal glass-panel adblock-panel">
+      <button class="close-modal" id="close-adblock">&times;</button>
+      <h2 class="space-grotesk">AdBlocker Detected 🥺</h2>
+      <p class="adblock-text">
+        Hey friend! CC Downgrader is <strong>100% free, private, and open-source</strong>. 
+        Unobtrusive ads and small tips are the <em>only source of support</em> to keep this tool live and free for everyone.
+      </p>
+      <p class="adblock-subtext">
+        Please consider whitelisting this site, or buy me a beer if CC Downgrader saved your day! 🍺
+      </p>
+      <div class="adblock-actions">
+        <button id="understand-adblock-btn" class="primary-btn space-grotesk">Got it, thanks!</button>
+        <a href="https://py.pl/3zyJvKFbXmb6KEVIrM9OSg" target="_blank" rel="noopener" class="secondary-btn space-grotesk">Buy me a beer 🍺</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ethical Ad Space / Footer Ad Container -->
   <div id="ad-container" class="ad-space">
-    <span>Ethical Ad Space</span>
+    <ins class="adsbygoogle"
+         style="display:block; width:100%; text-align:center;"
+         data-ad-client="ca-pub-2940110943660865"
+         data-ad-format="horizontal"
+         data-full-width-responsive="true"></ins>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
   </div>
 
   <!-- Cookie Banner -->
@@ -298,7 +352,7 @@
     <button id="accept-cookies" class="primary-btn small">Accept</button>
   </div>
 
-  <!-- Footer Legal Info (Ottimizzato per Accessibilità e Contrasto) -->
+  <!-- Footer Legal Info -->
   <footer>
     <p>© 2026 Andrea Maria Serghei Monzani · Busnago 20874 (MB) · P.IVA 14532680965 · <a href="mailto:andrea.monzani99@pec.it" class="footer-link">andrea.monzani99@pec.it</a> | <a href="https://github.com/AndreaMonzani/cc-downgrader" target="_blank" rel="noopener" class="footer-link">GitHub Source</a></p>
   </footer>
