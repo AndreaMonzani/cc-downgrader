@@ -52,7 +52,7 @@ body {
 .pixelify-sans { font-family: "Pixelify Sans", sans-serif; }
 .space-grotesk { font-family: "Space Grotesk", sans-serif; }
 
-/* --- CUSTOM CURSOR (Abilitato solo su Desktop/Mouse) --- */
+/* --- CUSTOM CURSOR --- */
 @media (hover: hover) and (pointer: fine) {
   body, a, button, input, .dropzone-giant, .split-pane { cursor: none !important; }
 
@@ -84,7 +84,6 @@ body {
   }
 }
 
-/* Nasconde il cursore custom su Touch Screen */
 @media (hover: none) or (pointer: coarse) {
   #cursor-dot, #cursor-ring { display: none !important; }
 }
@@ -455,7 +454,7 @@ main {
 
 .faq-item {
   margin-bottom: 25px;
-  border-bottom: 1px solid rgba(255, 255, 25Boot 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   padding-bottom: 20px;
 }
 
@@ -670,7 +669,7 @@ main {
   outline: none;
 }
 
-/* --- MOBILE BOTTOM DOCK NAV BAR (Hidden on Desktop) --- */
+/* MOBILE BOTTOM DOCK NAV BAR */
 .mobile-bottom-dock {
   display: none;
   position: fixed;
@@ -746,7 +745,7 @@ footer {
 #cookie-banner p { margin: 0; font-size: 13px; color: #ddd; }
 #cookie-banner .small { padding: 8px 18px; font-size: 13px; margin: 0; }
 
-/* --- RESPONSIVE MEDIA QUERIES (MOBILE APP EXPERIENCE) --- */
+/* --- RESPONSIVE MEDIA QUERIES --- */
 @media (max-width: 768px) {
   .desktop-only-nav { display: none !important; }
   .mobile-bottom-dock { display: block; }

@@ -100,7 +100,7 @@ function setAdvancedMode(enable) {
 
 toggleBtn.addEventListener('click', () => setAdvancedMode(!isAdvancedMode));
 
-// --- SWIPE GESTURE DETECTOR (INSTAGRAM STYLE FOR MOBILE) ---
+// --- SWIPE GESTURE DETECTOR (MOBILE) ---
 let touchStartX = 0;
 let touchStartY = 0;
 
@@ -116,13 +116,10 @@ window.addEventListener('touchend', (e) => {
   const diffX = touchEndX - touchStartX;
   const diffY = touchEndY - touchStartY;
 
-  // Verifica che lo swipe sia orizzontale e maggiore di 60px
   if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 60) {
     if (diffX < 0 && !isAdvancedMode) {
-      // Swipe verso sinistra -> Vai ad Advanced Mode
       setAdvancedMode(true);
     } else if (diffX > 0 && isAdvancedMode) {
-      // Swipe verso destra -> Torna a Quick Drop
       setAdvancedMode(false);
     }
   }
@@ -203,11 +200,10 @@ function showErrorState() {
   }, 1000);
 }
 
-// --- 6. DRAG & DROP + FILE CLICK FOR MOBILE ---
+// --- 6. DRAG & DROP ENGINE ---
 function setupDropzone(el, onDropCb) {
   if(!el) return;
   
-  // Drag & drop standard per desktop
   el.addEventListener('dragover', e => { e.preventDefault(); el.classList.add('drag-over'); });
   el.addEventListener('dragleave', () => el.classList.remove('drag-over'));
   el.addEventListener('drop', e => {
@@ -224,9 +220,7 @@ function setupDropzone(el, onDropCb) {
     onDropCb(file, ext);
   });
 
-  // Tocco per selezionare il file da Mobile
-  el.addEventListener('click', (e) => {
-    // Evita di aprire il selettore se l'utente sta facendo scroll
+  el.addEventListener('click', () => {
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
     fileInput.accept = '.prproj, .aep, .aepx';
