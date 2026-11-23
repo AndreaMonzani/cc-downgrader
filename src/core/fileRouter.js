@@ -17,6 +17,15 @@ const PR_SCHEMA_MAP = {
   1: 'Universal Legacy Compatible'
 };
 
+const PR_TARGET_LABELS = {
+  '45': 'PR 2027',
+  '44': 'PR 2026',
+  '43': 'PR 2025',
+  '42': 'PR 2024',
+  '41': 'PR 2023',
+  '1': 'Legacy (v1)'
+};
+
 function readFourCC(view, offset) {
   return String.fromCharCode(
     view.getUint8(offset),
@@ -188,11 +197,12 @@ export async function processFile(file, { aeVersion = '24', prVersion = '1' } = 
     }
 
     const blob = await compressToGzipBlob(patchedXml);
-    const targetLabel = targetSchema === '1' ? 'Legacy (v1)' : `Schema v${targetSchema}`;
+    const targetLabel = PR_TARGET_LABELS[targetSchema] || `Schema v${targetSchema}`;
+    const fileSuffix = targetSchema === '1' ? 'Legacy' : targetLabel.replace(' ', '');
 
     return {
       blob,
-      filename: `${baseName}_downgraded${originalExt}`,
+      filename: `${baseName}_${fileSuffix}${originalExt}`,
       sourceVersion,
       targetVersion: targetLabel
     };
@@ -217,7 +227,7 @@ export async function processFile(file, { aeVersion = '24', prVersion = '1' } = 
       blob,
       filename: `${baseName}_AE20${targetMajor}${originalExt}`,
       sourceVersion: `v${oldMajor}.${oldMinor}`,
-      targetVersion: `v${targetMajor}.0`
+      targetVersion: `AE 20${targetMajor}`
     };
   }
 
@@ -238,7 +248,7 @@ export async function processFile(file, { aeVersion = '24', prVersion = '1' } = 
       blob,
       filename: `${baseName}_AE20${targetMajor}${originalExt}`,
       sourceVersion,
-      targetVersion: `v${targetMajor}.0`
+      targetVersion: `AE 20${targetMajor}`
     };
   }
 

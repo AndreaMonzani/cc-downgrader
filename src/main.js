@@ -20,7 +20,6 @@ const studioToast = document.getElementById('studio-toast');
 const toastMessage = document.getElementById('toast-message');
 
 const advancedModal = document.getElementById('advanced-modal');
-const advancedModalCard = document.getElementById('advanced-modal-card');
 const coffeeModal = document.getElementById('coffee-modal');
 const adblockModal = document.getElementById('adblock-modal');
 const closeAdblockBtn = document.getElementById('close-adblock');
@@ -353,7 +352,7 @@ setupDropzone(dropzonePr, (file, ext) => {
   openAdvancedModal(file, isAe ? 'ae' : 'pr', isAe);
 });
 
-// --- 10. PRO STUDIO MODAL & VERSION PILLS ---
+// --- 10. PRO STUDIO MODAL & VERSION PILLS (23-27) ---
 function updateModalVersionThumb(activeBtn) {
   if (!modalVersionThumb || !activeBtn) return;
   animate(
@@ -370,18 +369,23 @@ function renderModalVersions(type) {
   versionSelector.innerHTML = '';
   const options = type === 'ae'
     ? [
-        { val: '26', label: 'AE 2026' },
-        { val: '25', label: 'AE 2025' },
-        { val: '24', label: 'AE 2024' },
-        { val: '23', label: 'AE 2023' },
-        { val: '22', label: 'AE 2022' }
+        { val: '27', label: 'AE 27' },
+        { val: '26', label: 'AE 26' },
+        { val: '25', label: 'AE 25' },
+        { val: '24', label: 'AE 24' },
+        { val: '23', label: 'AE 23' }
       ]
     : [
-        { val: '1', label: 'Universal Legacy' },
-        { val: '43', label: 'PR 2025' },
-        { val: '42', label: 'PR 2024' },
-        { val: '41', label: 'PR 2023' }
+        { val: '45', label: 'PR 27' },
+        { val: '44', label: 'PR 26' },
+        { val: '43', label: 'PR 25' },
+        { val: '42', label: 'PR 24' },
+        { val: '41', label: 'PR 23' },
+        { val: '1',  label: 'Legacy' }
       ];
+
+  // Default: AE 24 (index 3) or PR 24 (index 3)
+  const defaultIdx = 3;
 
   options.forEach((opt, idx) => {
     const btn = document.createElement('button');
@@ -390,7 +394,6 @@ function renderModalVersions(type) {
     btn.dataset.val = opt.val;
     btn.textContent = opt.label;
 
-    const defaultIdx = type === 'ae' ? 2 : 0; // Default AE 2024 or PR Universal Legacy
     if (idx === defaultIdx) {
       btn.classList.add('active');
       currentTargetVersion = opt.val;
