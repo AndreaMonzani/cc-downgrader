@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" style="background-color:#09090B;">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,18 +11,16 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/src/style.css" />
 
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2940110943660865" crossorigin="anonymous"></script>
 </head>
-<body style="background-color:#09090B; color:#FAFAFA;">
-  <div class="ambient-light" aria-hidden="true"></div>
-
+<body>
   <header class="top-bar">
     <div class="header-left">
-      <a href="/" class="logo space-grotesk">
-        <span class="logo-mark">CC</span>
+      <a href="/" class="logo">
+        <span class="logo-mark mono">CC</span>
         <span>Studio Tools</span>
         <span class="version-chip mono">JSX</span>
       </a>
@@ -36,7 +34,7 @@
         <div class="nav-dropdown">
           <button type="button" class="nav-link nav-dropdown-trigger active-page" aria-haspopup="true">
             <span>Tools</span>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
           <div class="nav-dropdown-menu">
             <div class="dropdown-header-label mono">DOWNLOADABLE TOOLS</div>
@@ -63,38 +61,38 @@
     </div>
   </header>
 
-  <main style="padding-top: 108px; justify-content: flex-start;">
-    <article class="seo-content-container" style="margin-top: 0;">
+  <main style="padding-top: 96px; justify-content: flex-start;">
+    <article class="seo-content-container">
       <header class="section-header">
         <span class="eyebrow mono">DOWNLOADABLE STUDIO TOOLS</span>
-        <h1 class="space-grotesk hero-title">CC Comp Duplicator<br><span class="title-accent">Studio Edition for After Effects</span></h1>
-        <p class="seo-lead">Duplicate entire pre-comp hierarchies, automatically relink shared sub-comps, and update expressions in one click — styled to match the CC Downgrader dark workspace.</p>
-        <div style="margin-top: 24px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
-          <a href="/scripts/CC_Comp_Duplicator.jsx" download="CC_Comp_Duplicator.jsx" class="primary-btn space-grotesk" style="width: auto; padding: 14px 28px;">
-            Download CC_Comp_Duplicator.jsx (Free)
+        <h1 class="hero-title">CC Comp Duplicator<br><span class="title-accent">Studio Edition for After Effects</span></h1>
+        <p class="seo-lead">Duplicate entire pre-comp hierarchies, automatically relink shared sub-comps, and update expressions in one click.</p>
+        <div class="modal-actions-row" style="margin-top: 24px; max-width: 460px;">
+          <a href="/scripts/CC_Comp_Duplicator.jsx" download="CC_Comp_Duplicator.jsx" class="primary-btn">
+            Download CC_Comp_Duplicator.jsx
           </a>
           <a href="https://instagram.com/Andremonz99" target="_blank" rel="noopener" class="secondary-btn">
-            Instagram @Andremonz99
+            @Andremonz99
           </a>
         </div>
       </header>
 
-      <div class="seo-grid" style="grid-template-columns: repeat(2, 1fr);">
-        <section class="seo-card spotlight-card">
-          <div class="card-tag mono" style="color: #10B981;">AVAILABLE NOW • AFTER EFFECTS CC 2020–2027</div>
+      <div class="spec-sheet" style="grid-template-columns: repeat(2, 1fr);">
+        <section class="spec-cell">
+          <div class="card-tag mono" style="color: var(--state-ok);">AVAILABLE NOW • AE CC 2020–2027</div>
           <h3>CC Comp Duplicator (.jsx)</h3>
           <p>Recursive composition duplicator with smart deduplication, Prefix/Suffix/Regex filtering, First/Last number increment, footage &amp; solid duplication, and automatic expression rewriting.</p>
         </section>
 
-        <section class="seo-card spotlight-card" style="opacity: 0.72;">
+        <section class="spec-cell">
           <div class="card-tag mono">COMING SOON • ROADMAP</div>
           <h3>More Premiere &amp; AE Studio Tools</h3>
-          <p>New dockable scripts and utilities for post-production pipelines (batch marker exporters, project cleaners, and expression tools) are currently in development. Follow <strong>@Andremonz99</strong> for releases.</p>
+          <p>New dockable scripts and utilities for post-production pipelines (batch marker exporters, project cleaners, and expression tools) are currently in development.</p>
         </section>
       </div>
 
-      <section class="seo-faq-section" style="margin-bottom: 28px;">
-        <h2 class="space-grotesk">How to Keep It Always Docked in After Effects</h2>
+      <section class="seo-faq-section">
+        <h2>How to Keep It Always Docked in After Effects</h2>
         <div class="faq-list">
           <div class="faq-item">
             <h3>1. macOS Installation Path</h3>
@@ -120,19 +118,19 @@
   <div class="mobile-bottom-dock">
     <nav class="mobile-dock-nav" aria-label="Mobile quick links">
       <a href="/" class="dock-link">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         <span>Downgrade</span>
       </a>
       <a href="/converter.html" class="dock-link">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
         <span>Converter</span>
       </a>
       <a href="https://paypal.me/andremonz99" target="_blank" rel="noopener" class="dock-link highlight">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/></svg>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/></svg>
         <span>Support</span>
       </a>
       <a href="https://github.com/AndreaMonzani/cc-downgrader" target="_blank" rel="noopener" class="dock-link">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
         <span>Source</span>
       </a>
     </nav>

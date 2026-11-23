@@ -1,5 +1,6 @@
 import './converter.css';
-import { animate, stagger } from 'motion';
+import { stagger } from 'motion';
+import { DURATION, EASE, safeAnimate, animateThumb, prefersReducedMotion } from './core/motionTokens.js';
 import {
   LIMITS,
   buildFFmpegArgs,
@@ -12,6 +13,7 @@ import {
 const modeQuickBtn = document.getElementById('mode-quick-btn');
 const modeProBtn = document.getElementById('mode-pro-btn');
 const modeThumb = document.getElementById('mode-thumb');
+const modeControl = document.querySelector('.segmented-control');
 const videoProControls = document.getElementById('video-pro-controls');
 
 const typeTabs = document.querySelectorAll('.type-tab');
@@ -74,36 +76,75 @@ const studioToast = document.getElementById('studio-toast');
 const toastMessage = document.getElementById('toast-message');
 
 // --- STATE ---
-let activeTab = 'video';
 let queuedFiles = [];
 let currentVideoUrl = null;
 let toastTimer = null;
 
 // --- HELPERS ---
 function showToast(msg, isError = false) {
+  if (!studioToast || !toastMessage) return;
   clearTimeout(toastTimer);
   toastMessage.textContent = msg;
   studioToast.classList.toggle('is-error', isError);
   studioToast.classList.remove('hidden');
-  animate(studioToast, { opacity: [0, 1], transform: ['translate(-50%, -8px)', 'translate(-50%, 0)'] }, { duration: 0.22 });
+
+  safeAnimate(
+    studioToast,
+    { opacity: [0, 1], transform: ['translate(-50%, -8px)', 'translate(-50%, 0px)'] },
+    { duration: DURATION.fast }
+  );
 
   toastTimer = setTimeout(() => {
-    animate(studioToast, { opacity: [1, 0] }, { duration: 0.2 }).finished.then(() => {
+    safeAnimate(studioToast, { opacity: [1, 0] }, { duration: DURATION.instant }).finished.then(() => {
       studioToast.classList.add('hidden');
     });
   }, 3400);
 }
 
+function openModalAnimated(overlay) {
+  overlay.classList.remove('hidden');
+  const card = overlay.querySelector('.studio-modal');
+  if (card) {
+    safeAnimate(
+      card,
+      { opacity: [0, 1], transform: ['scale(0.97) translateY(8px)', 'scale(1) translateY(0px)'] },
+      { duration: DURATION.fast }
+    );
+  }
+}
+
+function closeModalAnimated(overlay) {
+  if (!overlay || overlay.classList.contains('hidden')) return;
+  const card = overlay.querySelector('.studio-modal');
+  if (card) {
+    safeAnimate(
+      card,
+      { opacity: [1, 0], transform: ['scale(1)', 'scale(0.98)'] },
+      { duration: DURATION.instant }
+    ).finished.then(() => overlay.classList.add('hidden'));
+  } else {
+    overlay.classList.add('hidden');
+  }
+}
+
 function showLimitPopup(file, maxMb, typeLabel) {
   const fileMb = (file.size / (1024 * 1024)).toFixed(1);
   limitModalDesc.textContent = `Because CC Media Studio runs 100% client-side in your browser (zero server upload), ${typeLabel} files are capped at ${maxMb} MB to keep your browser stable.`;
-  limitFileDetails.innerHTML = `
-    <strong>File:</strong> ${file.name}<br>
-    <strong>Detected Size:</strong> ${fileMb} MB (Max allowed: ${maxMb} MB)
-  `;
-  limitModal.classList.remove('hidden');
-  const card = limitModal.querySelector('.studio-modal');
-  animate(card, { opacity: [0, 1], transform: ['scale(0.95)', 'scale(1)'] }, { duration: 0.22 });
+
+  limitFileDetails.innerHTML = '';
+  const rows = [
+    ['File', file.name],
+    ['Detected Size', `${fileMb} MB (Max allowed: ${maxMb} MB)`]
+  ];
+  rows.forEach(([label, val], idx) => {
+    const strong = document.createElement('strong');
+    strong.textContent = `${label}: `;
+    limitFileDetails.appendChild(strong);
+    limitFileDetails.appendChild(document.createTextNode(val));
+    if (idx < rows.length - 1) limitFileDetails.appendChild(document.createElement('br'));
+  });
+
+  openModalAnimated(limitModal);
 }
 
 function triggerDownload(blob, filename) {
@@ -124,30 +165,45 @@ function formatTimecode(seconds) {
   return `${pad(hrs)}:${pad(mins)}:${pad(secs)}:${pad(frames)}`;
 }
 
-// --- MODE & TAB SWITCHERS ---
-function updateModeThumb(btn) {
-  animate(modeThumb, { width: `${btn.offsetWidth}px`, transform: `translateX(${btn.offsetLeft - 3}px)` }, { duration: 0.25 });
+// --- TOP NAV PILL BUBBLE ---
+const headerNav = document.getElementById('header-nav');
+const navThumb = document.getElementById('nav-thumb');
+
+if (headerNav && navThumb) {
+  headerNav.querySelectorAll('.nav-link:not(.support-cta)').forEach((link) => {
+    link.addEventListener('mouseenter', () => {
+      animateThumb(navThumb, link, headerNav, 0);
+    });
+  });
+
+  headerNav.addEventListener('mouseleave', () => {
+    safeAnimate(navThumb, { opacity: 0 }, { duration: DURATION.instant });
+  });
 }
 
-modeQuickBtn.addEventListener('click', () => {
+// --- MODE & TAB SWITCHERS ---
+modeQuickBtn?.addEventListener('click', () => {
   modeQuickBtn.classList.add('active');
-  modeProBtn.classList.remove('active');
-  videoProControls.classList.add('hidden');
-  updateModeThumb(modeQuickBtn);
+  modeQuickBtn.setAttribute('aria-selected', 'true');
+  modeProBtn?.classList.remove('active');
+  modeProBtn?.setAttribute('aria-selected', 'false');
+  videoProControls?.classList.add('hidden');
+  animateThumb(modeThumb, modeQuickBtn, modeControl, 3);
 });
 
-modeProBtn.addEventListener('click', () => {
+modeProBtn?.addEventListener('click', () => {
   modeProBtn.classList.add('active');
-  modeQuickBtn.classList.remove('active');
-  videoProControls.classList.remove('hidden');
-  updateModeThumb(modeProBtn);
+  modeProBtn.setAttribute('aria-selected', 'true');
+  modeQuickBtn?.classList.remove('active');
+  modeQuickBtn?.setAttribute('aria-selected', 'false');
+  videoProControls?.classList.remove('hidden');
+  animateThumb(modeThumb, modeProBtn, modeControl, 3);
 });
 
 function switchTab(tab) {
-  activeTab = tab;
   typeTabs.forEach((t) => t.classList.toggle('active', t.dataset.tab === tab));
-  videoSettingsPanel.classList.toggle('hidden', tab !== 'video');
-  imageSettingsPanel.classList.toggle('hidden', tab !== 'image');
+  videoSettingsPanel?.classList.toggle('hidden', tab !== 'video');
+  imageSettingsPanel?.classList.toggle('hidden', tab !== 'image');
 }
 
 typeTabs.forEach((btn) => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
@@ -166,9 +222,9 @@ function syncCompatibility() {
   }
 }
 
-vidContainer.addEventListener('change', syncCompatibility);
-vidCrf.addEventListener('input', () => { crfVal.textContent = vidCrf.value; });
-imgQuality.addEventListener('input', () => { imgQualVal.textContent = `${imgQuality.value}%`; });
+vidContainer?.addEventListener('change', syncCompatibility);
+vidCrf?.addEventListener('input', () => { crfVal.textContent = vidCrf.value; });
+imgQuality?.addEventListener('input', () => { imgQualVal.textContent = `${imgQuality.value}%`; });
 
 document.querySelectorAll('#video-presets .preset-card').forEach((card) => {
   card.addEventListener('click', () => {
@@ -205,18 +261,18 @@ function updateBurnInOverlay() {
   }
 }
 
-burninTcEnable.addEventListener('change', updateBurnInOverlay);
-burninTcPos.addEventListener('change', updateBurnInOverlay);
-burninTitleText.addEventListener('input', updateBurnInOverlay);
+burninTcEnable?.addEventListener('change', updateBurnInOverlay);
+burninTcPos?.addEventListener('change', updateBurnInOverlay);
+burninTitleText?.addEventListener('input', updateBurnInOverlay);
 
-videoPlayer.addEventListener('timeupdate', () => {
-  if (burninTcEnable.checked) {
+videoPlayer?.addEventListener('timeupdate', () => {
+  if (burninTcEnable?.checked) {
     burninTcBadge.textContent = formatTimecode(videoPlayer.currentTime);
   }
 });
 
 // --- EXTRACT FRAME PNG ---
-extractFrameBtn.addEventListener('click', () => {
+extractFrameBtn?.addEventListener('click', () => {
   if (!videoPlayer.videoWidth) return;
   const canvas = document.createElement('canvas');
   canvas.width = videoPlayer.videoWidth;
@@ -287,16 +343,23 @@ function renderQueue() {
   queuedFiles.forEach((f) => {
     const li = document.createElement('li');
     li.className = 'queue-item';
-    li.innerHTML = `
-      <span class="queue-item-name">${f.name}</span>
-      <span class="queue-item-meta mono">${(f.size / (1024 * 1024)).toFixed(2)} MB</span>
-    `;
+
+    const nameSpan = document.createElement('span');
+    nameSpan.className = 'queue-item-name';
+    nameSpan.textContent = f.name;
+
+    const metaSpan = document.createElement('span');
+    metaSpan.className = 'queue-item-meta mono';
+    metaSpan.textContent = `${(f.size / (1024 * 1024)).toFixed(2)} MB`;
+
+    li.appendChild(nameSpan);
+    li.appendChild(metaSpan);
     queueList.appendChild(li);
   });
   queuePanel.classList.toggle('hidden', queuedFiles.length === 0);
 }
 
-clearQueueBtn.addEventListener('click', () => {
+clearQueueBtn?.addEventListener('click', () => {
   queuedFiles = [];
   renderQueue();
   videoPreviewCard.classList.add('hidden');
@@ -304,24 +367,30 @@ clearQueueBtn.addEventListener('click', () => {
   startImageBtn.disabled = true;
 });
 
-// Dropzone Events
-dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drag-over'); });
-dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
-dropzone.addEventListener('drop', (e) => {
-  e.preventDefault();
-  dropzone.classList.remove('drag-over');
-  handleFiles(e.dataTransfer.files);
-});
-dropzone.addEventListener('click', () => {
+const openFilePicker = () => {
   const input = document.createElement('input');
   input.type = 'file';
   input.multiple = true;
   input.accept = 'video/*,audio/*,image/*,.mkv,.mov,.mxf';
   input.onchange = (e) => handleFiles(e.target.files);
   input.click();
+};
+
+dropzone?.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+dropzone?.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+dropzone?.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dropzone.classList.remove('drag-over');
+  handleFiles(e.dataTransfer.files);
+});
+dropzone?.addEventListener('click', openFilePicker);
+dropzone?.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    openFilePicker();
+  }
 });
 
-// --- COLLECT VIDEO OPTIONS ---
 function getVideoOpts() {
   return {
     container: vidContainer.value,
@@ -335,8 +404,7 @@ function getVideoOpts() {
   };
 }
 
-// --- RUN VIDEO CONVERSION ---
-startVideoBtn.addEventListener('click', async () => {
+startVideoBtn?.addEventListener('click', async () => {
   if (!queuedFiles.length) return;
   const file = queuedFiles[0];
   const opts = getVideoOpts();
@@ -344,7 +412,7 @@ startVideoBtn.addEventListener('click', async () => {
   startVideoBtn.disabled = true;
   cancelVideoBtn.classList.remove('hidden');
   progressWrap.classList.remove('hidden');
-  progressLabel.textContent = 'Initializing FFmpeg WASM...';
+  progressLabel.textContent = 'Loading FFmpeg WASM...';
   progressPct.textContent = '0%';
   progressFill.style.width = '0%';
 
@@ -368,7 +436,7 @@ startVideoBtn.addEventListener('click', async () => {
   }
 });
 
-cancelVideoBtn.addEventListener('click', () => {
+cancelVideoBtn?.addEventListener('click', () => {
   terminateFFmpeg();
   progressWrap.classList.add('hidden');
   cancelVideoBtn.classList.add('hidden');
@@ -376,8 +444,7 @@ cancelVideoBtn.addEventListener('click', () => {
   showToast('Conversion cancelled.');
 });
 
-// --- RUN IMAGE BATCH CONVERSION ---
-startImageBtn.addEventListener('click', async () => {
+startImageBtn?.addEventListener('click', async () => {
   if (!queuedFiles.length) return;
   startImageBtn.disabled = true;
 
@@ -398,25 +465,45 @@ startImageBtn.addEventListener('click', async () => {
 });
 
 // --- MODALS ---
-closeLimitModal.addEventListener('click', () => limitModal.classList.add('hidden'));
-ackLimitBtn.addEventListener('click', () => limitModal.classList.add('hidden'));
+closeLimitModal?.addEventListener('click', () => closeModalAnimated(limitModal));
+ackLimitBtn?.addEventListener('click', () => closeModalAnimated(limitModal));
 
-showFfmpegBtn.addEventListener('click', () => {
+showFfmpegBtn?.addEventListener('click', () => {
   const inputName = queuedFiles[0]?.name || 'input.mp4';
   const opts = getVideoOpts();
   const args = buildFFmpegArgs(inputName, `output.${opts.container}`, opts);
   ffmpegCmdOutput.textContent = `ffmpeg ${args.join(' ')}`;
-  ffmpegCmdModal.classList.remove('hidden');
+  openModalAnimated(ffmpegCmdModal);
 });
 
-closeCmdModal.addEventListener('click', () => ffmpegCmdModal.classList.add('hidden'));
-copyCmdBtn.addEventListener('click', () => {
+closeCmdModal?.addEventListener('click', () => closeModalAnimated(ffmpegCmdModal));
+copyCmdBtn?.addEventListener('click', () => {
   navigator.clipboard.writeText(ffmpegCmdOutput.textContent);
   showToast('FFmpeg command copied to clipboard');
 });
 
-// --- INIT ---
+document.querySelectorAll('.modal-overlay').forEach((overlay) => {
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) closeModalAnimated(overlay);
+  });
+});
+
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay:not(.hidden)').forEach((m) => closeModalAnimated(m));
+  }
+});
+
 window.addEventListener('DOMContentLoaded', () => {
-  updateModeThumb(modeQuickBtn);
-  animate('.hero-animate', { opacity: [0, 1], transform: ['translateY(14px)', 'translateY(0)'] }, { duration: 0.5, delay: stagger(0.08) });
+  animateThumb(modeThumb, modeQuickBtn, modeControl, 3);
+  if (!prefersReducedMotion()) {
+    const items = document.querySelectorAll('.hero-animate');
+    if (items.length) {
+      safeAnimate(
+        items,
+        { opacity: [0, 1], transform: ['translateY(12px)', 'translateY(0px)'] },
+        { duration: DURATION.enter, delay: stagger(0.06), easing: EASE.out }
+      );
+    }
+  }
 });

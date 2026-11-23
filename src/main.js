@@ -1,6 +1,6 @@
 import './style.css';
-import { animate, stagger, inView } from 'motion';
-import anime from 'animejs';
+import { stagger, inView } from 'motion';
+import { DURATION, EASE, safeAnimate, animateThumb, prefersReducedMotion } from './core/motionTokens.js';
 import { inspectFile, processFile } from './core/fileRouter.js';
 
 // --- DOM REFERENCES ---
@@ -9,6 +9,7 @@ const viewAdvanced = document.getElementById('view-advanced');
 const modeQuickBtn = document.getElementById('mode-quick-btn');
 const modeProBtn = document.getElementById('mode-pro-btn');
 const modeThumb = document.getElementById('mode-thumb');
+const modeControl = document.querySelector('.segmented-control');
 
 const dropzoneHome = document.getElementById('dropzone-home');
 const dropzoneIdleState = document.getElementById('dropzone-idle-state');
@@ -43,112 +44,29 @@ let currentTargetVersion = null;
 let currentFileExt = '';
 let toastTimeout = null;
 
-// --- 1. MOTION.DEV ENTRANCE CHOREOGRAPHY ---
+// --- 1. MOTION ENTRANCE & SCROLL ---
 function runEntranceAnimations() {
+  if (prefersReducedMotion()) return;
+
   const heroItems = document.querySelectorAll('.hero-animate');
   if (heroItems.length) {
-    animate(
+    safeAnimate(
       heroItems,
-      {
-        opacity: [0, 1],
-        transform: ['translateY(18px)', 'translateY(0px)']
-      },
-      {
-        duration: 0.65,
-        delay: stagger(0.09),
-        easing: [0.22, 1, 0.36, 1]
-      }
+      { opacity: [0, 1], transform: ['translateY(12px)', 'translateY(0px)'] },
+      { duration: DURATION.enter, delay: stagger(0.06), easing: EASE.out }
     );
   }
 
-  inView('.seo-card, .seo-faq-section', (entry) => {
-    animate(
+  inView('.spec-sheet, .seo-faq-section', (entry) => {
+    safeAnimate(
       entry.target,
-      {
-        opacity: [0, 1],
-        transform: ['translateY(20px)', 'translateY(0px)']
-      },
-      {
-        duration: 0.55,
-        easing: [0.22, 1, 0.36, 1]
-      }
+      { opacity: [0, 1], transform: ['translateY(14px)', 'translateY(0px)'] },
+      { duration: DURATION.enter, easing: EASE.out }
     );
   }, { amount: 0.15 });
 }
 
-// --- 2. ANIME.JS DROPZONE PERIMETER BEAM & RETICLES ---
-function initAnimeDropzoneEffects() {
-  const beamRect = document.getElementById('dropzone-beam-rect');
-  if (beamRect) {
-    anime({
-      targets: beamRect,
-      strokeDashoffset: [anime.setDashoffset, 0],
-      easing: 'linear',
-      duration: 3800,
-      loop: true
-    });
-  }
-
-  if (dropzoneHome) {
-    dropzoneHome.addEventListener('mouseenter', () => {
-      anime({
-        targets: '.reticle',
-        scale: [1, 1.15, 1],
-        duration: 380,
-        easing: 'easeOutQuad'
-      });
-    });
-  }
-}
-
-// --- 3. PARTICLE BURST ENGINE (ANIME.JS) ---
-function spawnParticles(x, y) {
-  const colors = ['#C084FC', '#818CF8', '#E9D5FF', '#38BDF8'];
-  const count = 16;
-
-  for (let i = 0; i < count; i++) {
-    const particle = document.createElement('span');
-    particle.className = 'koko-particle';
-    particle.style.left = `${x}px`;
-    particle.style.top = `${y}px`;
-    particle.style.backgroundColor = colors[i % colors.length];
-    document.body.appendChild(particle);
-
-    const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.4;
-    const distance = 36 + Math.random() * 48;
-
-    anime({
-      targets: particle,
-      translateX: Math.cos(angle) * distance,
-      translateY: Math.sin(angle) * distance,
-      scale: [1, 0],
-      opacity: [1, 0],
-      duration: 620 + Math.random() * 200,
-      easing: 'easeOutExpo',
-      complete: () => particle.remove()
-    });
-  }
-}
-
-document.querySelectorAll('.particle-trigger').forEach((btn) => {
-  btn.addEventListener('click', (e) => {
-    const rect = btn.getBoundingClientRect();
-    const x = e.clientX || rect.left + rect.width / 2;
-    const y = e.clientY || rect.top + rect.height / 2;
-    spawnParticles(x, y);
-  });
-});
-
-// --- 4. SPOTLIGHT BENTO CARDS ---
-document.querySelectorAll('.spotlight-card').forEach((card) => {
-  card.addEventListener('mousemove', (e) => {
-    const rect = card.getBoundingClientRect();
-    card.style.setProperty('--spot-x', `${e.clientX - rect.left}px`);
-    card.style.setProperty('--spot-y', `${e.clientY - rect.top}px`);
-  });
-});
-
-// --- 5. STUDIO TOAST FEEDBACK ---
+// --- 2. NON-BLOCKING TOAST ---
 function showToast(message, isError = false) {
   if (!studioToast || !toastMessage) return;
   clearTimeout(toastTimeout);
@@ -157,49 +75,32 @@ function showToast(message, isError = false) {
   studioToast.classList.toggle('is-error', isError);
   studioToast.classList.remove('hidden');
 
-  animate(
+  safeAnimate(
     studioToast,
-    {
-      opacity: [0, 1],
-      transform: ['translate(-50%, -10px)', 'translate(-50%, 0px)']
-    },
-    { duration: 0.25, easing: 'easeOut' }
+    { opacity: [0, 1], transform: ['translate(-50%, -8px)', 'translate(-50%, 0px)'] },
+    { duration: DURATION.fast }
   );
 
   if (isError && dropzoneHome) {
-    animate(
+    safeAnimate(
       dropzoneHome,
-      {
-        transform: ['translateX(0px)', 'translateX(-7px)', 'translateX(7px)', 'translateX(-4px)', 'translateX(0px)']
-      },
-      { duration: 0.35 }
+      { transform: ['translateX(0px)', 'translateX(-6px)', 'translateX(6px)', 'translateX(-3px)', 'translateX(0px)'] },
+      { duration: DURATION.base }
     );
   }
 
   toastTimeout = setTimeout(() => {
-    animate(
+    safeAnimate(
       studioToast,
-      { opacity: [1, 0], transform: ['translate(-50%, 0px)', 'translate(-50%, -8px)'] },
-      { duration: 0.2 }
+      { opacity: [1, 0], transform: ['translate(-50%, 0px)', 'translate(-50%, -6px)'] },
+      { duration: DURATION.instant }
     ).finished.then(() => {
       studioToast.classList.add('hidden');
     });
-  }, 3600);
+  }, 3400);
 }
 
-// --- 6. SEGMENTED MODE SWITCHER ---
-function updateModeThumb(activeBtn) {
-  if (!modeThumb || !activeBtn) return;
-  animate(
-    modeThumb,
-    {
-      width: `${activeBtn.offsetWidth}px`,
-      transform: `translateX(${activeBtn.offsetLeft - 3}px)`
-    },
-    { duration: 0.28, easing: [0.22, 1, 0.36, 1] }
-  );
-}
-
+// --- 3. MODE SWITCHER ---
 function setAdvancedMode(enable) {
   if (isAdvancedMode === enable) return;
   isAdvancedMode = enable;
@@ -208,24 +109,24 @@ function setAdvancedMode(enable) {
   modeQuickBtn.setAttribute('aria-selected', String(!enable));
   modeProBtn.classList.toggle('active', enable);
   modeProBtn.setAttribute('aria-selected', String(enable));
-  updateModeThumb(enable ? modeProBtn : modeQuickBtn);
+  animateThumb(modeThumb, enable ? modeProBtn : modeQuickBtn, modeControl, 3);
 
   const outgoing = enable ? viewHome : viewAdvanced;
   const incoming = enable ? viewAdvanced : viewHome;
 
-  animate(
+  safeAnimate(
     outgoing,
-    { opacity: [1, 0], transform: ['translateY(0px)', 'translateY(8px)'] },
-    { duration: 0.2 }
+    { opacity: [1, 0], transform: ['translateY(0px)', 'translateY(6px)'] },
+    { duration: DURATION.instant }
   ).finished.then(() => {
     outgoing.classList.add('hidden');
     outgoing.classList.remove('active');
     incoming.classList.remove('hidden');
     incoming.classList.add('active');
-    animate(
+    safeAnimate(
       incoming,
-      { opacity: [0, 1], transform: ['translateY(10px)', 'translateY(0px)'] },
-      { duration: 0.32, easing: [0.22, 1, 0.36, 1] }
+      { opacity: [0, 1], transform: ['translateY(8px)', 'translateY(0px)'] },
+      { duration: DURATION.base }
     );
   });
 }
@@ -233,35 +134,23 @@ function setAdvancedMode(enable) {
 modeQuickBtn?.addEventListener('click', () => setAdvancedMode(false));
 modeProBtn?.addEventListener('click', () => setAdvancedMode(true));
 
-// --- 7. TOP NAV PILL HOVER (getBoundingClientRect FIX FOR DROPDOWN) ---
+// --- 4. TOP NAV PILL HOVER ---
 const headerNav = document.getElementById('header-nav');
 const navThumb = document.getElementById('nav-thumb');
 
 if (headerNav && navThumb) {
   headerNav.querySelectorAll('.nav-link:not(.support-cta)').forEach((link) => {
     link.addEventListener('mouseenter', () => {
-      const navRect = headerNav.getBoundingClientRect();
-      const linkRect = link.getBoundingClientRect();
-      const leftOffset = linkRect.left - navRect.left;
-
-      animate(
-        navThumb,
-        {
-          opacity: 1,
-          width: `${linkRect.width}px`,
-          transform: `translateX(${leftOffset}px)`
-        },
-        { duration: 0.22, easing: [0.22, 1, 0.36, 1] }
-      );
+      animateThumb(navThumb, link, headerNav, 0);
     });
   });
 
   headerNav.addEventListener('mouseleave', () => {
-    animate(navThumb, { opacity: 0 }, { duration: 0.18 });
+    safeAnimate(navThumb, { opacity: 0 }, { duration: DURATION.instant });
   });
 }
 
-// --- 8. MOBILE SWIPE GESTURE ---
+// --- 5. MOBILE SWIPE GESTURE ---
 let touchStartX = 0;
 let touchStartY = 0;
 
@@ -279,7 +168,7 @@ window.addEventListener('touchend', (e) => {
   }
 }, { passive: true });
 
-// --- 9. DRAG & DROP HANDLERS ---
+// --- 6. DRAG & DROP HANDLERS ---
 function isValidProjectFile(file) {
   const ext = file.name.split('.').pop().toLowerCase();
   return ['prproj', 'aep', 'aepx'].includes(ext) ? ext : null;
@@ -305,7 +194,7 @@ function setupDropzone(el, onFileAccepted) {
 
     const ext = isValidProjectFile(file);
     if (!ext) {
-      showToast('Unsupported format. Please drop .prproj, .aep, or .aepx files.', true);
+      showToast('Unsupported format. Drop .prproj, .aep, or .aepx files.', true);
       return;
     }
     onFileAccepted(file, ext);
@@ -320,7 +209,7 @@ function setupDropzone(el, onFileAccepted) {
       if (!file) return;
       const ext = isValidProjectFile(file);
       if (!ext) {
-        showToast('Unsupported format. Please select .prproj, .aep, or .aepx files.', true);
+        showToast('Unsupported format. Select .prproj, .aep, or .aepx files.', true);
         return;
       }
       onFileAccepted(file, ext);
@@ -352,19 +241,7 @@ setupDropzone(dropzonePr, (file, ext) => {
   openAdvancedModal(file, isAe ? 'ae' : 'pr', isAe);
 });
 
-// --- 10. PRO STUDIO MODAL & VERSION PILLS (23-27) ---
-function updateModalVersionThumb(activeBtn) {
-  if (!modalVersionThumb || !activeBtn) return;
-  animate(
-    modalVersionThumb,
-    {
-      width: `${activeBtn.offsetWidth}px`,
-      transform: `translateX(${activeBtn.offsetLeft - 4}px)`
-    },
-    { duration: 0.24, easing: [0.22, 1, 0.36, 1] }
-  );
-}
-
+// --- 7. PRO STUDIO MODAL & VERSION PILLS ---
 function renderModalVersions(type) {
   versionSelector.innerHTML = '';
   const options = type === 'ae'
@@ -402,7 +279,7 @@ function renderModalVersions(type) {
       versionSelector.querySelectorAll('.ver-pill-btn').forEach((b) => b.classList.remove('active'));
       btn.classList.add('active');
       currentTargetVersion = btn.dataset.val;
-      updateModalVersionThumb(btn);
+      animateThumb(modalVersionThumb, btn, versionSelector, 0);
     });
 
     versionSelector.appendChild(btn);
@@ -410,7 +287,7 @@ function renderModalVersions(type) {
 
   requestAnimationFrame(() => {
     const active = versionSelector.querySelector('.ver-pill-btn.active');
-    updateModalVersionThumb(active);
+    animateThumb(modalVersionThumb, active, versionSelector, 0);
   });
 }
 
@@ -418,25 +295,37 @@ function openModalAnimated(overlay) {
   overlay.classList.remove('hidden');
   const card = overlay.querySelector('.studio-modal');
   if (card) {
-    animate(
+    safeAnimate(
       card,
-      { opacity: [0, 1], transform: ['scale(0.96) translateY(10px)', 'scale(1) translateY(0px)'] },
-      { duration: 0.24, easing: [0.22, 1, 0.36, 1] }
+      { opacity: [0, 1], transform: ['scale(0.97) translateY(8px)', 'scale(1) translateY(0px)'] },
+      { duration: DURATION.fast }
     );
   }
 }
 
 function closeModalAnimated(overlay) {
+  if (!overlay || overlay.classList.contains('hidden')) return;
   const card = overlay.querySelector('.studio-modal');
   if (card) {
-    animate(
+    safeAnimate(
       card,
-      { opacity: [1, 0], transform: ['scale(1)', 'scale(0.97)'] },
-      { duration: 0.16 }
+      { opacity: [1, 0], transform: ['scale(1)', 'scale(0.98)'] },
+      { duration: DURATION.instant }
     ).finished.then(() => overlay.classList.add('hidden'));
   } else {
     overlay.classList.add('hidden');
   }
+}
+
+function renderMetadataRows(rows) {
+  metadataBox.innerHTML = '';
+  rows.forEach(([label, value], i) => {
+    const strong = document.createElement('strong');
+    strong.textContent = `${label}: `;
+    metadataBox.appendChild(strong);
+    metadataBox.appendChild(document.createTextNode(value));
+    if (i < rows.length - 1) metadataBox.appendChild(document.createElement('br'));
+  });
 }
 
 async function openAdvancedModal(file, actualType, autoSwitched = false) {
@@ -467,11 +356,11 @@ async function openAdvancedModal(file, actualType, autoSwitched = false) {
     detectedInfo = actualType === 'ae' ? 'After Effects Binary' : 'Premiere Pro XML';
   }
 
-  metadataBox.innerHTML = `
-    <strong>Source File:</strong> ${file.name}<br>
-    <strong>Detected Build:</strong> ${detectedInfo}<br>
-    <strong>Payload Size:</strong> ${sizeMb} MB
-  `;
+  renderMetadataRows([
+    ['Source File', file.name],
+    ['Detected Build', detectedInfo],
+    ['Payload Size', `${sizeMb} MB`]
+  ]);
 
   renderModalVersions(actualType);
   openModalAnimated(advancedModal);
@@ -482,6 +371,18 @@ closeButtons.forEach((btn) => {
     const overlay = btn.closest('.modal-overlay');
     if (overlay) closeModalAnimated(overlay);
   });
+});
+
+document.querySelectorAll('.modal-overlay').forEach((overlay) => {
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) closeModalAnimated(overlay);
+  });
+});
+
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay:not(.hidden)').forEach((m) => closeModalAnimated(m));
+  }
 });
 
 closeAdblockBtn?.addEventListener('click', () => closeModalAnimated(adblockModal));
@@ -507,9 +408,10 @@ executeAdvancedBtn?.addEventListener('click', async () => {
   );
 });
 
-// --- 11. CONVERSION EXECUTION & TELEMETRY ---
+// --- 8. CONVERSION EXECUTION & TELEMETRY ---
 async function triggerEngine(file, aeVersion, prVersion, customOutputName = null) {
   const startTime = performance.now();
+  dropzoneHome?.classList.add('is-processing');
 
   try {
     const result = await processFile(file, { aeVersion, prVersion });
@@ -527,23 +429,16 @@ async function triggerEngine(file, aeVersion, prVersion, customOutputName = null
       document.getElementById('tel-filename').textContent = downloadName;
       document.getElementById('tel-from').textContent = result.sourceVersion;
       document.getElementById('tel-to').textContent = result.targetVersion;
-      document.getElementById('tel-sub').textContent = `Patched locally in ${elapsedMs}ms. Drop another file anytime.`;
+      document.getElementById('tel-sub').textContent = `Patched locally in ${elapsedMs}ms • 0 B uploaded`;
 
       dropzoneIdleState.classList.add('hidden');
       dropzoneTelemetryState.classList.remove('hidden');
 
-      anime({
-        targets: dropzoneTelemetryState,
-        scale: [0.95, 1],
-        opacity: [0, 1],
-        duration: 420,
-        easing: 'easeOutExpo'
-      });
-    }
-
-    const dzRect = dropzoneHome?.getBoundingClientRect();
-    if (dzRect) {
-      spawnParticles(dzRect.left + dzRect.width / 2, dzRect.top + dzRect.height / 2);
+      safeAnimate(
+        dropzoneTelemetryState,
+        { opacity: [0, 1], transform: ['scale(0.97)', 'scale(1)'] },
+        { duration: DURATION.base }
+      );
     }
 
     showToast(`Patched ${result.sourceVersion} → ${result.targetVersion} (${elapsedMs}ms)`);
@@ -551,15 +446,17 @@ async function triggerEngine(file, aeVersion, prVersion, customOutputName = null
     const count = parseInt(localStorage.getItem('downgrade_count') || '0', 10) + 1;
     localStorage.setItem('downgrade_count', String(count));
     if (count % 3 === 0) {
-      setTimeout(() => openModalAnimated(coffeeModal), 900);
+      setTimeout(() => openModalAnimated(coffeeModal), 800);
     }
   } catch (error) {
     console.error(error);
     showToast(error.message || 'Failed to patch project file.', true);
+  } finally {
+    dropzoneHome?.classList.remove('is-processing');
   }
 }
 
-// --- 12. POLITE ADBLOCK DETECTOR ---
+// --- 9. POLITE ADBLOCK DETECTOR ---
 function detectAdBlock() {
   const probe = document.createElement('div');
   probe.innerHTML = '&nbsp;';
@@ -581,9 +478,8 @@ function detectAdBlock() {
 
 // --- INITIALIZE ---
 window.addEventListener('DOMContentLoaded', () => {
-  updateModeThumb(modeQuickBtn);
+  animateThumb(modeThumb, modeQuickBtn, modeControl, 3);
   runEntranceAnimations();
-  initAnimeDropzoneEffects();
 });
 
 window.addEventListener('load', detectAdBlock);

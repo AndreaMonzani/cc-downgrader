@@ -1,24 +1,21 @@
 <!DOCTYPE html>
-<html lang="en" style="background-color:#09090B;">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/png" sizes="512x512" href="/src/assets/favicon_cc.png" />
   <meta name="google-adsense-account" content="ca-pub-2940110943660865">
 
   <title>Free Client-Side Video &amp; Image Converter | CC Downgrader Studio</title>
-  <meta name="description" content="Convert videos (MP4, MOV, WebM, GIF, Audio) and batch images (WebP, JPG, PNG, AVIF) 100% client-side in your browser with Timecode Burn-in and Media Encoder presets." />
+  <meta name="description" content="Convert videos (MP4, MOV, WebM, GIF, Audio) and batch images (WebP, JPG, PNG) 100% client-side in your browser with Timecode Preview and Media Encoder presets." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/src/converter.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2940110943660865" crossorigin="anonymous"></script>
 </head>
-<body style="background-color:#09090B; color:#FAFAFA;">
-  <div class="ambient-light" aria-hidden="true"></div>
-
+<body>
   <div id="studio-toast" class="studio-toast hidden" role="status" aria-live="polite">
     <span class="toast-indicator"></span>
     <span id="toast-message" class="toast-text">Ready</span>
@@ -26,8 +23,8 @@
 
   <header class="top-bar">
     <div class="header-left">
-      <a href="/" class="logo space-grotesk">
-        <span class="logo-mark">CC</span>
+      <a href="/" class="logo">
+        <span class="logo-mark mono">CC</span>
         <span>Media Studio</span>
         <span class="version-chip mono">WASM</span>
       </a>
@@ -48,7 +45,7 @@
         <div class="nav-dropdown">
           <button type="button" class="nav-link nav-dropdown-trigger" aria-haspopup="true">
             <span>Tools</span>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
           <div class="nav-dropdown-menu">
             <div class="dropdown-header-label mono">DOWNLOADABLE TOOLS</div>
@@ -95,18 +92,18 @@
       <section class="workspace-left">
         <div id="media-dropzone" class="koko-dropzone compact-dropzone" tabindex="0" role="button" aria-label="Drop video or image files">
           <div class="dropzone-grid" aria-hidden="true"></div>
-          <span class="reticle tl"></span><span class="reticle tr"></span>
-          <span class="reticle bl"></span><span class="reticle br"></span>
+          <span class="reticle tl" aria-hidden="true"></span><span class="reticle tr" aria-hidden="true"></span>
+          <span class="reticle bl" aria-hidden="true"></span><span class="reticle br" aria-hidden="true"></span>
 
           <div class="dropzone-inner">
             <div class="upload-icon-wrap small-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
             </div>
-            <h1 class="space-grotesk converter-title">Drop Video or Images</h1>
+            <h1 class="converter-title">Drop Video or Images</h1>
             <p class="hero-subtitle small-sub">Auto-detects media type. Max 150MB per video or 35MB per image (up to 30 batch files).</p>
             <div class="format-pills mono">
               <span class="fmt-pill pr">MP4 / MOV / MKV</span>
-              <span class="fmt-pill ae">PNG / JPG / WebP / AVIF</span>
+              <span class="fmt-pill ae">PNG / JPG / WebP</span>
             </div>
           </div>
         </div>
@@ -143,11 +140,11 @@
             <div class="preset-grid" id="video-presets">
               <button type="button" class="preset-card active" data-preset="review">
                 <strong>Client Review</strong>
-                <span class="mono">MP4 • H.264 • 720p/1080p</span>
+                <span class="mono">MP4 • H.264 • 720p</span>
               </button>
               <button type="button" class="preset-card" data-preset="youtube">
                 <strong>Master Web</strong>
-                <span class="mono">MP4 • H.264 • High CRF</span>
+                <span class="mono">MP4 • H.264 • CRF 18</span>
               </button>
               <button type="button" class="preset-card" data-preset="social">
                 <strong>Social 9:16</strong>
@@ -159,14 +156,14 @@
               </button>
               <button type="button" class="preset-card" data-preset="audio">
                 <strong>Audio Only</strong>
-                <span class="mono">MP3 / WAV Extract</span>
+                <span class="mono">MP3 192k Extract</span>
               </button>
             </div>
           </div>
 
           <div id="video-pro-controls" class="pro-controls hidden">
             <details class="studio-accordion" open>
-              <summary class="space-grotesk">Format &amp; Video Codec</summary>
+              <summary>Format &amp; Video Codec</summary>
               <div class="accordion-body">
                 <div class="field-row">
                   <div class="field">
@@ -233,7 +230,7 @@
             </details>
 
             <details class="studio-accordion">
-              <summary class="space-grotesk">Trim In / Out</summary>
+              <summary>Trim In / Out</summary>
               <div class="accordion-body">
                 <div class="field-row">
                   <div class="field">
@@ -249,11 +246,11 @@
             </details>
 
             <details class="studio-accordion">
-              <summary class="space-grotesk">Burn-In (Timecode &amp; Title)</summary>
+              <summary>Player Overlay (Timecode &amp; Title)</summary>
               <div class="accordion-body">
                 <label class="checkbox-row">
                   <input type="checkbox" id="burnin-tc-enable">
-                  <span>Enable Timecode Burn-In (Live Preview)</span>
+                  <span>Show Live Timecode Overlay on Player</span>
                 </label>
                 <div class="field-row">
                   <div class="field">
@@ -266,11 +263,11 @@
                     </select>
                   </div>
                   <div class="field">
-                    <label for="burnin-title-text">Title / Watermark Text</label>
+                    <label for="burnin-title-text">Reference Label</label>
                     <input type="text" id="burnin-title-text" class="studio-input-box mono" placeholder="e.g. CLIENT REVIEW">
                   </div>
                 </div>
-                <p class="hint-text">Burn-in preview is shown in real time on the player.</p>
+                <p class="hint-text">Preview-only overlay on the player (WASM core runs without external font dependencies).</p>
               </div>
             </details>
           </div>
@@ -287,7 +284,7 @@
             </div>
 
             <div class="btn-group">
-              <button type="button" id="start-video-btn" class="primary-btn space-grotesk" disabled>Convert Video</button>
+              <button type="button" id="start-video-btn" class="primary-btn" disabled>Convert Video</button>
               <button type="button" id="cancel-video-btn" class="secondary-btn hidden">Cancel</button>
             </div>
 
@@ -328,14 +325,14 @@
           </div>
 
           <div class="action-footer">
-            <button type="button" id="start-image-btn" class="primary-btn space-grotesk" disabled>Convert &amp; Download</button>
-            <p class="hint-text" style="text-align:center; margin-top:8px;">Multiple images are automatically bundled into a .ZIP archive.</p>
+            <button type="button" id="start-image-btn" class="primary-btn" disabled>Convert &amp; Download</button>
+            <p class="hint-text hint-centered">Multiple images are automatically bundled into a .ZIP archive.</p>
           </div>
         </div>
       </aside>
     </div>
 
-    <div class="ad-sub-container" style="max-width: 1180px;">
+    <div class="ad-sub-container converter-ad">
       <ins class="adsbygoogle"
            style="display:block; width:100%; min-height:90px;"
            data-ad-client="ca-pub-2940110943660865"
@@ -349,16 +346,16 @@
   <div id="limit-modal" class="modal-overlay hidden" role="dialog" aria-labelledby="limit-modal-title" aria-modal="true">
     <div class="modal studio-modal support-modal">
       <button type="button" class="close-modal" id="close-limit-modal" aria-label="Close modal">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
-      <span class="modal-eyebrow mono" style="color: #EF4444;">LIMIT REACHED</span>
-      <h3 id="limit-modal-title" class="space-grotesk">File Exceeds Browser Limit</h3>
+      <span class="modal-eyebrow mono limit-eyebrow">LIMIT REACHED</span>
+      <h3 id="limit-modal-title">File Exceeds Browser Limit</h3>
       <p id="limit-modal-desc" class="modal-body-text">
         This tool runs 100% locally in your browser memory (zero server upload). To prevent browser tab crashes, files are capped at 150 MB for video and 35 MB per image.
       </p>
       <div id="limit-file-details" class="metadata-box mono"></div>
       <div class="modal-actions-row">
-        <button type="button" id="ack-limit-btn" class="primary-btn space-grotesk">Got it</button>
+        <button type="button" id="ack-limit-btn" class="primary-btn">Got it</button>
       </div>
     </div>
   </div>
@@ -369,33 +366,33 @@
       <div class="modal-header">
         <div>
           <span class="modal-eyebrow mono">PRO CLI INSPECTOR</span>
-          <h3 class="space-grotesk">Generated FFmpeg Command</h3>
+          <h3>Generated FFmpeg Command</h3>
         </div>
         <button type="button" class="close-modal" id="close-cmd-modal" aria-label="Close modal">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
       <pre id="ffmpeg-cmd-output" class="code-preview mono"></pre>
-      <button type="button" id="copy-cmd-btn" class="primary-btn space-grotesk" style="margin-top:14px;">Copy Command</button>
+      <button type="button" id="copy-cmd-btn" class="primary-btn">Copy Command</button>
     </div>
   </div>
 
   <div class="mobile-bottom-dock">
     <nav class="mobile-dock-nav" aria-label="Mobile quick links">
       <a href="/" class="dock-link">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         <span>Downgrade</span>
       </a>
       <a href="/scripts.html" class="dock-link">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         <span>Tools</span>
       </a>
       <a href="https://paypal.me/andremonz99" target="_blank" rel="noopener" class="dock-link highlight">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/></svg>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/></svg>
         <span>Support</span>
       </a>
       <a href="https://github.com/AndreaMonzani/cc-downgrader" target="_blank" rel="noopener" class="dock-link">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
         <span>Source</span>
       </a>
     </nav>

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" style="background-color:#09090B;">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <link rel="icon" type="image/png" sizes="512x512" href="/src/assets/favicon_cc.png" />
   <link rel="apple-touch-icon" sizes="512x512" href="/src/assets/favicon_cc.png" />
@@ -29,9 +29,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://upload.wikimedia.org" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/src/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2940110943660865" crossorigin="anonymous"></script>
 
@@ -56,9 +54,7 @@
   }
   </script>
 </head>
-<body style="background-color:#09090B; color:#FAFAFA;">
-  <div class="ambient-light" aria-hidden="true"></div>
-
+<body>
   <div id="studio-toast" class="studio-toast hidden" role="status" aria-live="polite">
     <span class="toast-indicator" id="toast-dot"></span>
     <span id="toast-message" class="toast-text">Ready</span>
@@ -66,8 +62,8 @@
 
   <header class="top-bar">
     <div class="header-left">
-      <a href="/" class="logo space-grotesk" id="brand-logo">
-        <span class="logo-mark">CC</span>
+      <a href="/" class="logo" id="brand-logo">
+        <span class="logo-mark mono">CC</span>
         <span>Downgrader</span>
         <span class="version-chip mono">v2.6</span>
       </a>
@@ -84,11 +80,10 @@
         <div class="nav-pill-thumb" id="nav-thumb"></div>
         <a href="/converter.html" class="nav-link">Converter</a>
 
-        <!-- Downloadable Tools Dropdown -->
         <div class="nav-dropdown">
           <button type="button" class="nav-link nav-dropdown-trigger" aria-haspopup="true">
             <span>Tools</span>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
           <div class="nav-dropdown-menu">
             <div class="dropdown-header-label mono">DOWNLOADABLE TOOLS</div>
@@ -111,8 +106,8 @@
 
         <a href="https://home.andreamonzani.com/" target="_blank" rel="noopener" class="nav-link">Portfolio</a>
         <a href="https://github.com/AndreaMonzani/cc-downgrader" target="_blank" rel="noopener" class="nav-link">GitHub</a>
-        <a href="https://paypal.me/andremonz99" target="_blank" rel="noopener" class="nav-link support-cta particle-trigger">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/></svg>
+        <a href="https://paypal.me/andremonz99" target="_blank" rel="noopener" class="nav-link support-cta">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/></svg>
           <span>Support</span>
         </a>
       </nav>
@@ -131,16 +126,6 @@
 
       <div id="dropzone-home" class="koko-dropzone hero-animate" tabindex="0" role="button" aria-label="Drop Premiere Pro or After Effects project file">
         <div class="dropzone-grid" aria-hidden="true"></div>
-        <svg class="dropzone-beam-svg" viewBox="0 0 1000 420" preserveAspectRatio="none" aria-hidden="true">
-          <rect id="dropzone-beam-rect" x="1.5" y="1.5" width="997" height="417" rx="22" ry="22" fill="none" stroke="url(#beamGrad)" stroke-width="2.5" />
-          <defs>
-            <linearGradient id="beamGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#818CF8" stop-opacity="0.1" />
-              <stop offset="50%" stop-color="#A855F7" stop-opacity="0.95" />
-              <stop offset="100%" stop-color="#38BDF8" stop-opacity="0.1" />
-            </linearGradient>
-          </defs>
-        </svg>
         <span class="reticle tl" aria-hidden="true"></span>
         <span class="reticle tr" aria-hidden="true"></span>
         <span class="reticle bl" aria-hidden="true"></span>
@@ -148,9 +133,9 @@
 
         <div class="dropzone-inner" id="dropzone-idle-state">
           <div class="upload-icon-wrap">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           </div>
-          <h1 class="space-grotesk hero-title">Premiere Pro &amp; After Effects<br><span class="title-accent">Project Downgrader</span></h1>
+          <h1 class="hero-title">Premiere Pro &amp; After Effects<br><span class="title-accent">Project Downgrader</span></h1>
           <p class="hero-subtitle">Drop a project file here or click to browse. Instant local binary &amp; XML header patching.</p>
           <div class="format-pills mono">
             <span class="fmt-pill pr">.prproj</span>
@@ -167,10 +152,10 @@
           </div>
           <div class="telemetry-versions">
             <span class="ver-box mono" id="tel-from">v27.0</span>
-            <svg class="ver-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            <svg class="ver-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             <span class="ver-box target mono" id="tel-to">Legacy</span>
           </div>
-          <p class="telemetry-sub" id="tel-sub">Converted locally in 12ms. Drop another file anytime.</p>
+          <p class="telemetry-sub mono" id="tel-sub">Converted locally in 12ms • 0 B uploaded</p>
         </div>
       </div>
 
@@ -183,31 +168,27 @@
         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
       </div>
 
-      <a href="#more-info" class="scroll-indicator" aria-label="Technical details and FAQ">
-        <span>Documentation &amp; FAQ</span>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="scroll-arrow"><polyline points="6 9 12 15 18 9"/></svg>
+      <a href="#more-info" class="scroll-indicator" aria-label="Technical specifications and FAQ">
+        <span>Specifications &amp; FAQ</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
       </a>
     </section>
 
     <section id="view-advanced" class="view hidden">
       <div class="split-container">
-        <div id="dropzone-ae" class="split-pane ae-pane spotlight-card" tabindex="0" role="button" aria-label="Drop After Effects project">
+        <div id="dropzone-ae" class="split-pane ae-pane" tabindex="0" role="button" aria-label="Drop After Effects project">
           <div class="pane-content">
-            <div class="app-badge ae-badge">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/c/cb/Adobe_After_Effects_CC_icon.svg" alt="After Effects project converter" class="app-icon" width="44" height="44" loading="lazy">
-            </div>
-            <h2 class="space-grotesk">After Effects</h2>
+            <div class="app-badge ae-badge">Ae</div>
+            <h2>After Effects</h2>
             <p class="pane-desc">Inspect RIFX header chunks &amp; choose exact target release (AE 23–27).</p>
             <span class="pane-ext mono">.aep / .aepx</span>
           </div>
         </div>
 
-        <div id="dropzone-pr" class="split-pane pr-pane spotlight-card" tabindex="0" role="button" aria-label="Drop Premiere Pro project">
+        <div id="dropzone-pr" class="split-pane pr-pane" tabindex="0" role="button" aria-label="Drop Premiere Pro project">
           <div class="pane-content">
-            <div class="app-badge pr-badge">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/4/40/Adobe_Premiere_Pro_CC_icon.svg" alt="Premiere Pro project downgrade tool" class="app-icon" width="44" height="44" loading="lazy">
-            </div>
-            <h2 class="space-grotesk">Premiere Pro</h2>
+            <div class="app-badge pr-badge">Pr</div>
+            <h2>Premiere Pro</h2>
             <p class="pane-desc">Decompress GZIP XML schema &amp; select Legacy or PR 23–27.</p>
             <span class="pane-ext mono">.prproj</span>
           </div>
@@ -227,33 +208,33 @@
 
   <article id="more-info" class="seo-content-container">
     <header class="section-header">
-      <span class="eyebrow mono">ARCHITECTURE &amp; COMPATIBILITY</span>
-      <h2 class="space-grotesk main-seo-title">Free Premiere Pro &amp; After Effects Project Downgrader</h2>
+      <span class="eyebrow mono">TECHNICAL SPECIFICATIONS</span>
+      <h2 class="main-seo-title">Free Premiere Pro &amp; After Effects Project Downgrader</h2>
       <p class="seo-lead">Convert newer Adobe Creative Cloud projects (.prproj, .aep, .aepx) to older versions online without installing plugins or uploading client assets.</p>
     </header>
 
-    <div class="seo-grid">
-      <section class="seo-card spotlight-card">
-        <div class="card-tag mono">GZIP / XML SCHEMA</div>
-        <h3>Downgrade Premiere Pro Projects (.prproj)</h3>
-        <p>Need a reliable Premiere downgrader? Encountered the error <em>"This project was saved in a newer version of Premiere Pro and cannot be opened"</em>? CC Downgrader decompresses the GZIP XML binary of your <strong>.prproj</strong> file and patches internal version IDs for backward compatibility.</p>
+    <div class="spec-sheet">
+      <section class="spec-cell">
+        <div class="card-tag mono">01 • GZIP / XML SCHEMA</div>
+        <h3>Premiere Pro (.prproj)</h3>
+        <p>Decompresses the GZIP XML binary of your <strong>.prproj</strong> file and patches internal <code>Version</code> attributes for backward compatibility across CC 2023–2027.</p>
       </section>
 
-      <section class="seo-card spotlight-card">
-        <div class="card-tag mono">RIFX / HEAD CHUNK</div>
-        <h3>Downgrade After Effects Projects (.aep / .aepx)</h3>
-        <p>Need to open a 2027, 2026, or 2025 After Effects project in AE 2024 or 2023? Our parser navigates the RIFX binary chunk hierarchy to patch version signatures directly in memory without corrupting compositions or expressions.</p>
+      <section class="spec-cell">
+        <div class="card-tag mono">02 • RIFX / HEAD CHUNK</div>
+        <h3>After Effects (.aep / .aepx)</h3>
+        <p>Navigates the RIFX binary chunk hierarchy to patch version signatures directly in memory without corrupting compositions, layers, or expressions.</p>
       </section>
 
-      <section class="seo-card spotlight-card">
-        <div class="card-tag mono">ZERO-UPLOAD PRIVACY</div>
-        <h3>100% Secure &amp; Client-Side Processing</h3>
-        <p>Unlike converters that upload your project files to remote servers, CC Downgrader processes everything locally inside your browser sandbox. Your edits, media paths, and NDA-protected client assets never leave your workstation.</p>
+      <section class="spec-cell">
+        <div class="card-tag mono">03 • ZERO-UPLOAD SANDBOX</div>
+        <h3>Client-Side Privacy</h3>
+        <p>All stream decompression and binary patching execute locally in your browser sandbox. NDA-protected client projects never leave your workstation.</p>
       </section>
     </div>
 
-    <section class="seo-faq-section spotlight-card">
-      <h2 class="space-grotesk">Frequently Asked Questions</h2>
+    <section class="seo-faq-section">
+      <h2>Frequently Asked Questions</h2>
       <div class="faq-list">
         <div class="faq-item">
           <h3>How do I downgrade a Premiere Pro project?</h3>
@@ -289,10 +270,10 @@
       <div class="modal-header">
         <div>
           <span class="modal-eyebrow mono" id="modal-engine-tag">ENGINE INSPECTOR</span>
-          <h3 id="modal-title" class="space-grotesk">Configure Downgrade</h3>
+          <h3 id="modal-title">Configure Downgrade</h3>
         </div>
         <button type="button" class="close-modal" aria-label="Close modal">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
       <div id="trick-warning" class="autodetect-notice hidden">
@@ -314,9 +295,9 @@
           <div class="version-pills" id="version-selector"></div>
         </div>
       </div>
-      <button type="button" id="execute-advanced-btn" class="primary-btn particle-trigger space-grotesk">
+      <button type="button" id="execute-advanced-btn" class="primary-btn">
         <span>Patch &amp; Download File</span>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       </button>
     </div>
   </div>
@@ -324,13 +305,13 @@
   <div id="coffee-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
     <div class="modal studio-modal support-modal">
       <button type="button" class="close-modal" aria-label="Close modal">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
       <span class="modal-eyebrow mono">OPEN SOURCE PROJECT</span>
-      <h3 class="space-grotesk">Saved you on a deadline?</h3>
+      <h3>Saved you on a deadline?</h3>
       <p class="modal-body-text">CC Downgrader is free, private, and open-source. If it helped your workflow, consider supporting development.</p>
       <div class="modal-actions-row">
-        <a href="https://paypal.me/andremonz99" target="_blank" rel="noopener" class="primary-btn particle-trigger space-grotesk">Support via PayPal</a>
+        <a href="https://paypal.me/andremonz99" target="_blank" rel="noopener" class="primary-btn">Support via PayPal</a>
         <a href="https://github.com/AndreaMonzani/cc-downgrader" target="_blank" rel="noopener" class="secondary-btn">Star on GitHub</a>
       </div>
     </div>
@@ -339,13 +320,13 @@
   <div id="adblock-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
     <div class="modal studio-modal support-modal">
       <button type="button" class="close-modal" id="close-adblock" aria-label="Close notice">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
       <span class="modal-eyebrow mono">ADBLOCKER DETECTED</span>
-      <h3 class="space-grotesk">Keep CC Downgrader Free</h3>
+      <h3>Keep CC Downgrader Free</h3>
       <p class="modal-body-text">CC Downgrader runs 100% free with zero paywalls. Non-intrusive ads and community tips cover hosting and maintenance.</p>
       <div class="modal-actions-row">
-        <button type="button" id="understand-adblock-btn" class="primary-btn space-grotesk">Continue</button>
+        <button type="button" id="understand-adblock-btn" class="primary-btn">Continue</button>
         <a href="https://paypal.me/andremonz99" target="_blank" rel="noopener" class="secondary-btn">Support Project</a>
       </div>
     </div>
@@ -354,19 +335,19 @@
   <div class="mobile-bottom-dock">
     <nav class="mobile-dock-nav" aria-label="Mobile quick links">
       <a href="/converter.html" class="dock-link">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
         <span>Converter</span>
       </a>
       <a href="/scripts.html" class="dock-link">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         <span>Tools</span>
       </a>
       <a href="https://paypal.me/andremonz99" target="_blank" rel="noopener" class="dock-link highlight">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/></svg>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/></svg>
         <span>Support</span>
       </a>
       <a href="https://github.com/AndreaMonzani/cc-downgrader" target="_blank" rel="noopener" class="dock-link">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
         <span>Source</span>
       </a>
     </nav>
