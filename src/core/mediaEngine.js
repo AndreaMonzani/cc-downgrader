@@ -1,5 +1,3 @@
-import { FFmpeg } from '@ffmpeg/ffmpeg';
-import { fetchFile, toBlobURL } from '@ffmpeg/util';
 import JSZip from 'jszip';
 
 export const LIMITS = {
@@ -14,10 +12,15 @@ let ffmpegInstance = null;
 let ffmpegLoaded = false;
 
 /**
- * Loads single-threaded FFmpeg WASM (no COOP/COEP headers required, AdSense safe).
+ * Lazy-loads FFmpeg WASM only when encoding starts so converter.html never blocks on boot.
  */
 export async function loadFFmpeg(onProgress) {
   if (ffmpegLoaded && ffmpegInstance) return ffmpegInstance;
+
+  const [{ FFmpeg }, { toBlobURL }] = await Promise.all([
+    import('@ffmpeg/ffmpeg'),
+    import('@ffmpeg/util')
+  ]);
 
   ffmpegInstance = new FFmpeg();
   if (onProgress) {
@@ -44,9 +47,6 @@ export function terminateFFmpeg() {
   }
 }
 
-/**
- * Builds the FFmpeg CLI arguments array based on UI settings.
- */
 export function buildFFmpegArgs(inputName, outputName, opts) {
   const args = [];
 
@@ -54,7 +54,6 @@ export function buildFFmpegArgs(inputName, outputName, opts) {
   args.push('-i', inputName);
   if (opts.trimEnd) args.push('-to', opts.trimEnd);
 
-  // Audio-only formats
   if (opts.container === 'mp3' || opts.container === 'wav' || opts.codec === 'none') {
     args.push('-vn');
     if (opts.container === 'mp3') {
@@ -66,13 +65,11 @@ export function buildFFmpegArgs(inputName, outputName, opts) {
     return args;
   }
 
-  // GIF preset
   if (opts.container === 'gif') {
     args.push('-vf', 'fps=15,scale=480:-1:flags=lanczos', outputName);
     return args;
   }
 
-  // Video Codec
   if (opts.codec === 'copy') {
     args.push('-c:v', 'copy');
   } else if (opts.container === 'webm') {
@@ -81,7 +78,6 @@ export function buildFFmpegArgs(inputName, outputName, opts) {
     args.push('-c:v', 'libx264', '-crf', String(opts.crf || 23), '-preset', 'veryfast', '-pix_fmt', 'yuv420p');
   }
 
-  // Video Filters (Scale / Crop)
   const filters = [];
   if (opts.scale && opts.scale !== 'source' && opts.codec !== 'copy') {
     if (opts.scale === '1080:1920' || opts.scale === '1080:1080') {
@@ -96,12 +92,10 @@ export function buildFFmpegArgs(inputName, outputName, opts) {
     args.push('-vf', filters.join(','));
   }
 
-  // Frame rate
   if (opts.fps && opts.fps !== 'source' && opts.codec !== 'copy') {
     args.push('-r', String(opts.fps));
   }
 
-  // Audio
   if (opts.audio === 'mute') {
     args.push('-an');
   } else if (opts.container === 'webm') {
@@ -119,11 +113,9 @@ export function buildFFmpegArgs(inputName, outputName, opts) {
   return args;
 }
 
-/**
- * Executes video conversion inside browser memory.
- */
 export async function convertVideo(file, opts, onProgress) {
   const ffmpeg = await loadFFmpeg(onProgress);
+  const { fetchFile } = await import('@ffmpeg/util');
   const ext = file.name.split('.').pop().toLowerCase();
   const inputName = `input.${ext}`;
   const outputName = `output.${opts.container}`;
@@ -152,9 +144,6 @@ export async function convertVideo(file, opts, onProgress) {
   };
 }
 
-/**
- * Converts a single image using native HTML5 Canvas.
- */
 export function convertSingleImage(file, { format, quality, maxWidth, bgColor }) {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -207,9 +196,6 @@ export function convertSingleImage(file, { format, quality, maxWidth, bgColor })
   });
 }
 
-/**
- * Batch converts images and bundles into a ZIP if > 1 file.
- */
 export async function convertImageBatch(files, opts) {
   if (files.length === 1) {
     return await convertSingleImage(files[0], opts);

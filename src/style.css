@@ -46,7 +46,6 @@ body {
 .mono { font-family: "JetBrains Mono", monospace; }
 .hidden { display: none !important; }
 
-/* Subtle Top Studio Ambient Glow */
 .ambient-light {
   position: fixed;
   top: -180px;
@@ -87,13 +86,8 @@ body {
   background: var(--accent-emerald);
 }
 
-.studio-toast.is-error .toast-indicator {
-  background: var(--accent-danger);
-}
-
-.studio-toast.is-error {
-  border-color: rgba(239, 68, 68, 0.45);
-}
+.studio-toast.is-error .toast-indicator { background: var(--accent-danger); }
+.studio-toast.is-error { border-color: rgba(239, 68, 68, 0.45); }
 
 /* --- TOP NAVIGATION BAR --- */
 .top-bar {
@@ -154,7 +148,7 @@ body {
   border-radius: 5px;
 }
 
-/* --- KOKONUTUI SEGMENTED MODE SWITCHER --- */
+/* --- SEGMENTED MODE SWITCHER --- */
 .segmented-control {
   position: relative;
   display: inline-flex;
@@ -195,11 +189,9 @@ body {
   white-space: nowrap;
 }
 
-.segment-btn.active {
-  color: var(--text-primary);
-}
+.segment-btn.active { color: var(--text-primary); }
 
-/* --- DESKTOP NAV PILL --- */
+/* --- DESKTOP NAV PILL & DROPDOWN SUBMENU --- */
 .nav-pill {
   position: relative;
   display: inline-flex;
@@ -237,10 +229,19 @@ body {
   font-weight: 500;
   border-radius: var(--radius-pill);
   transition: color 0.2s ease;
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
 }
 
-.nav-link:hover {
+.nav-link:hover,
+.nav-link.active-page {
   color: var(--text-primary);
+}
+
+.nav-link.active-page {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .nav-link.support-cta {
@@ -253,6 +254,111 @@ body {
 .nav-link.support-cta:hover {
   background: rgba(168, 85, 247, 0.24);
   color: #fff;
+}
+
+/* Downloadable Tools Dropdown */
+.nav-dropdown {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  z-index: 10;
+}
+
+.nav-dropdown-trigger svg {
+  transition: transform 0.2s ease;
+}
+
+.nav-dropdown:hover .nav-dropdown-trigger svg,
+.nav-dropdown:focus-within .nav-dropdown-trigger svg {
+  transform: rotate(180deg);
+}
+
+.nav-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  min-width: 268px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-hover);
+  border-radius: 14px;
+  padding: 6px;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.78);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Hover bridge so menu doesn't close while moving cursor down */
+.nav-dropdown-menu::before {
+  content: "";
+  position: absolute;
+  top: -12px;
+  left: 0;
+  right: 0;
+  height: 12px;
+}
+
+.nav-dropdown:hover .nav-dropdown-menu,
+.nav-dropdown:focus-within .nav-dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: background-color 0.18s ease;
+}
+
+.dropdown-item:hover:not(.is-disabled) {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.dropdown-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.dropdown-item strong {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.dropdown-item > span {
+  font-size: 11.5px;
+  color: var(--text-secondary);
+}
+
+.dropdown-badge {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: rgba(168, 85, 247, 0.16);
+  color: #E9D5FF;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.dropdown-badge.soon {
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  border-color: var(--border-hairline);
+}
+
+.dropdown-item.is-disabled {
+  opacity: 0.55;
+  cursor: default;
 }
 
 /* --- MAIN WORKSPACE --- */
@@ -307,7 +413,7 @@ main {
   box-shadow: 0 0 8px rgba(16, 185, 129, 0.7);
 }
 
-/* --- KOKONUTUI INTERACTIVE DROPZONE --- */
+/* --- INTERACTIVE DROPZONE --- */
 .koko-dropzone {
   position: relative;
   width: 100%;
@@ -338,7 +444,6 @@ main {
   background: rgba(168, 85, 247, 0.06);
 }
 
-/* Subtle Architectural Grid inside Dropzone */
 .dropzone-grid {
   position: absolute;
   inset: 0;
@@ -366,7 +471,6 @@ main {
   opacity: 1;
 }
 
-/* Corner Reticles */
 .reticle {
   position: absolute;
   width: 12px;
@@ -383,9 +487,7 @@ main {
 .reticle.br { bottom: 14px; right: 14px; border-width: 0 1.5px 1.5px 0; border-bottom-right-radius: 4px; }
 
 .koko-dropzone:hover .reticle,
-.koko-dropzone.drag-over .reticle {
-  border-color: var(--accent-pr);
-}
+.koko-dropzone.drag-over .reticle { border-color: var(--accent-pr); }
 
 .dropzone-inner {
   position: relative;
@@ -457,7 +559,6 @@ main {
   color: var(--text-muted);
 }
 
-/* Telemetry Readout inside Dropzone */
 .dropzone-telemetry {
   position: relative;
   z-index: 3;
@@ -514,11 +615,7 @@ main {
 }
 
 .ver-arrow { color: var(--text-muted); }
-
-.telemetry-sub {
-  font-size: 12px;
-  color: var(--text-secondary);
-}
+.telemetry-sub { font-size: 12px; color: var(--text-secondary); }
 
 /* --- PRO STUDIO SPLIT VIEW --- */
 .split-container {
@@ -575,11 +672,7 @@ main {
   letter-spacing: -0.02em;
 }
 
-.pane-desc {
-  font-size: 13.5px;
-  color: var(--text-secondary);
-  margin-bottom: 16px;
-}
+.pane-desc { font-size: 13.5px; color: var(--text-secondary); margin-bottom: 16px; }
 
 .pane-ext {
   font-size: 12px;
@@ -590,7 +683,7 @@ main {
   border: 1px solid var(--border-hairline);
 }
 
-/* --- SPOTLIGHT BENTO CARDS (KokonutUI Pattern) --- */
+/* --- SPOTLIGHT BENTO CARDS --- */
 .spotlight-card {
   position: relative;
   overflow: hidden;
@@ -602,22 +695,16 @@ main {
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(
-    420px circle at var(--spot-x) var(--spot-y),
-    rgba(168, 85, 247, 0.1),
-    transparent 65%
-  );
+  background: radial-gradient(420px circle at var(--spot-x) var(--spot-y), rgba(168, 85, 247, 0.1), transparent 65%);
   opacity: 0;
   transition: opacity 0.3s ease;
   pointer-events: none;
   z-index: 1;
 }
 
-.spotlight-card:hover::before {
-  opacity: 1;
-}
+.spotlight-card:hover::before { opacity: 1; }
 
-/* --- DISCREET ADSENSE CONTAINER --- */
+/* --- ADSENSE & SCROLL --- */
 .ad-sub-container {
   width: 100%;
   margin-top: 20px;
@@ -644,7 +731,7 @@ main {
 
 .scroll-indicator:hover { color: var(--text-primary); }
 
-/* --- SEO & DOCUMENTATION SECTION --- */
+/* --- SEO & DOCUMENTATION --- */
 .seo-content-container {
   width: 100%;
   max-width: 1080px;
@@ -654,10 +741,7 @@ main {
   z-index: 5;
 }
 
-.section-header {
-  text-align: center;
-  margin-bottom: 40px;
-}
+.section-header { text-align: center; margin-bottom: 40px; }
 
 .eyebrow {
   display: inline-block;
@@ -674,12 +758,7 @@ main {
   margin-bottom: 10px;
 }
 
-.seo-lead {
-  font-size: 15px;
-  color: var(--text-secondary);
-  max-width: 660px;
-  margin: 0 auto;
-}
+.seo-lead { font-size: 15px; color: var(--text-secondary); max-width: 660px; margin: 0 auto; }
 
 .seo-grid {
   display: grid;
@@ -697,28 +776,10 @@ main {
 }
 
 .seo-card:hover { border-color: var(--border-hover); }
+.card-tag { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; }
+.seo-card h3 { font-family: "Space Grotesk", sans-serif; font-size: 18px; font-weight: 600; margin-bottom: 10px; color: var(--text-primary); }
+.seo-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.65; }
 
-.card-tag {
-  font-size: 11px;
-  color: var(--text-muted);
-  margin-bottom: 12px;
-}
-
-.seo-card h3 {
-  font-family: "Space Grotesk", sans-serif;
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 10px;
-  color: var(--text-primary);
-}
-
-.seo-card p {
-  font-size: 14px;
-  color: var(--text-secondary);
-  line-height: 1.65;
-}
-
-/* FAQ Section */
 .seo-faq-section {
   background: var(--bg-surface);
   border: 1px solid var(--border-hairline);
@@ -726,32 +787,10 @@ main {
   padding: 36px;
 }
 
-.seo-faq-section h2 {
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 24px;
-  letter-spacing: -0.02em;
-}
-
-.faq-list {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px 32px;
-}
-
-.faq-item h3 {
-  font-family: "Space Grotesk", sans-serif;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 6px;
-}
-
-.faq-item p {
-  font-size: 13.5px;
-  color: var(--text-secondary);
-  line-height: 1.6;
-}
+.seo-faq-section h2 { font-size: 22px; font-weight: 700; margin-bottom: 24px; letter-spacing: -0.02em; }
+.faq-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px 32px; }
+.faq-item h3 { font-family: "Space Grotesk", sans-serif; font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; }
+.faq-item p { font-size: 13.5px; color: var(--text-secondary); line-height: 1.6; }
 
 .faq-item code {
   background: var(--bg-elevated);
@@ -788,26 +827,9 @@ main {
   text-align: left;
 }
 
-.modal-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: 18px;
-}
-
-.modal-eyebrow {
-  display: block;
-  font-size: 11px;
-  color: var(--accent-pr);
-  letter-spacing: 0.06em;
-  margin-bottom: 4px;
-}
-
-.studio-modal h3 {
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
+.modal-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 18px; }
+.modal-eyebrow { display: block; font-size: 11px; color: var(--accent-pr); letter-spacing: 0.06em; margin-bottom: 4px; }
+.studio-modal h3 { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
 
 .close-modal {
   width: 32px;
@@ -820,26 +842,11 @@ main {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: color 0.2s ease, border-color 0.2s ease;
 }
 
-.close-modal:hover {
-  color: var(--text-primary);
-  border-color: var(--border-hover);
-}
-
-.support-modal .close-modal {
-  position: absolute;
-  top: 22px;
-  right: 22px;
-}
-
-.modal-body-text {
-  font-size: 14px;
-  color: var(--text-secondary);
-  margin: 10px 0 22px;
-  line-height: 1.6;
-}
+.close-modal:hover { color: var(--text-primary); border-color: var(--border-hover); }
+.support-modal .close-modal { position: absolute; top: 22px; right: 22px; }
+.modal-body-text { font-size: 14px; color: var(--text-secondary); margin: 10px 0 22px; line-height: 1.6; }
 
 .autodetect-notice {
   display: flex;
@@ -854,13 +861,7 @@ main {
   color: #E0E7FF;
 }
 
-.notice-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--accent-ae);
-  flex-shrink: 0;
-}
+.notice-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-ae); flex-shrink: 0; }
 
 .metadata-box {
   background: var(--bg-obsidian);
@@ -873,22 +874,9 @@ main {
   margin-bottom: 18px;
 }
 
-.metadata-box strong {
-  color: var(--text-primary);
-  font-weight: 500;
-}
-
-.input-group {
-  margin-bottom: 18px;
-}
-
-.input-group label {
-  display: block;
-  font-size: 12.5px;
-  font-weight: 500;
-  color: var(--text-secondary);
-  margin-bottom: 8px;
-}
+.metadata-box strong { color: var(--text-primary); font-weight: 500; }
+.input-group { margin-bottom: 18px; }
+.input-group label { display: block; font-size: 12.5px; font-weight: 500; color: var(--text-secondary); margin-bottom: 8px; }
 
 .input-wrapper {
   display: flex;
@@ -897,30 +885,12 @@ main {
   border: 1px solid var(--border-hairline);
   border-radius: 10px;
   padding: 2px 12px;
-  transition: border-color 0.2s ease;
 }
 
-.input-wrapper:focus-within {
-  border-color: var(--accent-primary);
-}
+.input-wrapper:focus-within { border-color: var(--accent-primary); }
+.studio-input { flex: 1; background: transparent; border: none; outline: none; color: var(--text-primary); font-size: 13px; padding: 9px 0; }
+.ext-tag { font-size: 12px; color: var(--accent-pr); font-weight: 600; }
 
-.studio-input {
-  flex: 1;
-  background: transparent;
-  border: none;
-  outline: none;
-  color: var(--text-primary);
-  font-size: 13px;
-  padding: 9px 0;
-}
-
-.ext-tag {
-  font-size: 12px;
-  color: var(--accent-pr);
-  font-weight: 600;
-}
-
-/* Version Pills Selector inside Modal */
 .version-pills-wrap {
   position: relative;
   background: var(--bg-obsidian);
@@ -943,12 +913,7 @@ main {
   z-index: 1;
 }
 
-.version-pills {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  gap: 4px;
-}
+.version-pills { position: relative; z-index: 2; display: flex; gap: 4px; }
 
 .ver-pill-btn {
   flex: 1;
@@ -962,14 +927,10 @@ main {
   border-radius: 8px;
   cursor: pointer;
   white-space: nowrap;
-  transition: color 0.2s ease;
 }
 
-.ver-pill-btn.active {
-  color: var(--text-primary);
-}
+.ver-pill-btn.active { color: var(--text-primary); }
 
-/* Primary & Secondary Action Buttons */
 .primary-btn {
   width: 100%;
   display: inline-flex;
@@ -1003,19 +964,12 @@ main {
   font-weight: 500;
   text-decoration: none;
   cursor: pointer;
-  transition: background-color 0.2s ease;
 }
 
 .secondary-btn:hover { background: #222228; }
-
-.modal-actions-row {
-  display: flex;
-  gap: 10px;
-}
-
+.modal-actions-row { display: flex; gap: 10px; }
 .modal-actions-row .primary-btn { flex: 1; }
 
-/* KokonutUI Particle Burst */
 .koko-particle {
   position: fixed;
   width: 5px;
@@ -1063,7 +1017,6 @@ main {
 
 .dock-link.highlight { color: var(--accent-pr); }
 
-/* --- FOOTER & BOTTOM ADSENSE --- */
 .ad-space {
   width: 100%;
   max-width: 1080px;
@@ -1084,15 +1037,9 @@ footer {
   background: var(--bg-obsidian);
 }
 
-.footer-link {
-  color: var(--text-secondary);
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
+.footer-link { color: var(--text-secondary); text-decoration: none; }
 .footer-link:hover { color: var(--text-primary); }
 
-/* --- RESPONSIVE BREAKPOINTS --- */
 @media (max-width: 860px) {
   .seo-grid { grid-template-columns: 1fr; }
   .faq-list { grid-template-columns: 1fr; }
