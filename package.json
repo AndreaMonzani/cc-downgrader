@@ -1,7 +1,7 @@
 {
   "name": "cc-downgrader",
   "private": true,
-  "version": "2.0.0",
+  "version": "2.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,8 +9,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ffmpeg/ffmpeg": "^0.12.15",
+    "@ffmpeg/util": "^0.12.2",
     "animejs": "^3.2.2",
-    "motion": "^12.43.0"
+    "jszip": "^3.10.1",
+    "motion": "^12.4.7"
   },
   "devDependencies": {
     "vite": "^6.1.0"
