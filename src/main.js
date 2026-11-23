@@ -61,7 +61,6 @@ function runEntranceAnimations() {
     );
   }
 
-  // Scroll-triggered reveals for SEO & Bento Cards
   inView('.seo-card, .seo-faq-section', (entry) => {
     animate(
       entry.target,
@@ -102,7 +101,7 @@ function initAnimeDropzoneEffects() {
   }
 }
 
-// --- 3. KOKONUTUI PARTICLE BURST ENGINE (ANIME.JS) ---
+// --- 3. PARTICLE BURST ENGINE (ANIME.JS) ---
 function spawnParticles(x, y) {
   const colors = ['#C084FC', '#818CF8', '#E9D5FF', '#38BDF8'];
   const count = 16;
@@ -140,7 +139,7 @@ document.querySelectorAll('.particle-trigger').forEach((btn) => {
   });
 });
 
-// --- 4. KOKONUTUI SPOTLIGHT BENTO CARDS ---
+// --- 4. SPOTLIGHT BENTO CARDS ---
 document.querySelectorAll('.spotlight-card').forEach((card) => {
   card.addEventListener('mousemove', (e) => {
     const rect = card.getBoundingClientRect();
@@ -149,7 +148,7 @@ document.querySelectorAll('.spotlight-card').forEach((card) => {
   });
 });
 
-// --- 5. STUDIO TOAST FEEDBACK (NON-BLOCKING) ---
+// --- 5. STUDIO TOAST FEEDBACK ---
 function showToast(message, isError = false) {
   if (!studioToast || !toastMessage) return;
   clearTimeout(toastTimeout);
@@ -188,7 +187,7 @@ function showToast(message, isError = false) {
   }, 3600);
 }
 
-// --- 6. SEGMENTED MODE SWITCHER (MOTION.DEV) ---
+// --- 6. SEGMENTED MODE SWITCHER ---
 function updateModeThumb(activeBtn) {
   if (!modeThumb || !activeBtn) return;
   animate(
@@ -234,19 +233,23 @@ function setAdvancedMode(enable) {
 modeQuickBtn?.addEventListener('click', () => setAdvancedMode(false));
 modeProBtn?.addEventListener('click', () => setAdvancedMode(true));
 
-// --- 7. TOP NAV PILL HOVER (MOTION.DEV) ---
+// --- 7. TOP NAV PILL HOVER (getBoundingClientRect FIX FOR DROPDOWN) ---
 const headerNav = document.getElementById('header-nav');
 const navThumb = document.getElementById('nav-thumb');
 
 if (headerNav && navThumb) {
   headerNav.querySelectorAll('.nav-link:not(.support-cta)').forEach((link) => {
     link.addEventListener('mouseenter', () => {
+      const navRect = headerNav.getBoundingClientRect();
+      const linkRect = link.getBoundingClientRect();
+      const leftOffset = linkRect.left - navRect.left;
+
       animate(
         navThumb,
         {
           opacity: 1,
-          width: `${link.offsetWidth}px`,
-          transform: `translateX(${link.offsetLeft}px)`
+          width: `${linkRect.width}px`,
+          transform: `translateX(${leftOffset}px)`
         },
         { duration: 0.22, easing: [0.22, 1, 0.36, 1] }
       );
@@ -334,19 +337,16 @@ function setupDropzone(el, onFileAccepted) {
   });
 }
 
-// Quick Drop Action
 setupDropzone(dropzoneHome, async (file, ext) => {
   const isAe = ['aep', 'aepx'].includes(ext);
   await triggerEngine(file, isAe ? '24' : null, !isAe ? '1' : null);
 });
 
-// Pro Studio AE Dropzone
 setupDropzone(dropzoneAe, (file, ext) => {
   const isPr = ext === 'prproj';
   openAdvancedModal(file, isPr ? 'pr' : 'ae', isPr);
 });
 
-// Pro Studio PR Dropzone
 setupDropzone(dropzonePr, (file, ext) => {
   const isAe = ['aep', 'aepx'].includes(ext);
   openAdvancedModal(file, isAe ? 'ae' : 'pr', isAe);
@@ -384,7 +384,6 @@ function renderModalVersions(type) {
         { val: '1',  label: 'Legacy' }
       ];
 
-  // Default: AE 24 (index 3) or PR 24 (index 3)
   const defaultIdx = 3;
 
   options.forEach((opt, idx) => {
@@ -524,7 +523,6 @@ async function triggerEngine(file, aeVersion, prVersion, customOutputName = null
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 5000);
 
-    // Update Home Dropzone Telemetry Card
     if (dropzoneIdleState && dropzoneTelemetryState) {
       document.getElementById('tel-filename').textContent = downloadName;
       document.getElementById('tel-from').textContent = result.sourceVersion;

@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en" style="background-color:#09090B;">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <link rel="icon" type="image/png" sizes="512x512" href="/src/assets/favicon_cc.png" />
+  <meta name="google-adsense-account" content="ca-pub-2940110943660865">
+
+  <title>Free Client-Side Video &amp; Image Converter | CC Downgrader Studio</title>
+  <meta name="description" content="Convert videos (MP4, MOV, WebM, GIF, Audio) and batch images (WebP, JPG, PNG, AVIF) 100% client-side in your browser with Timecode Burn-in and Media Encoder presets." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/converter.css" />
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2940110943660865" crossorigin="anonymous"></script>
+</head>
+<body style="background-color:#09090B; color:#FAFAFA;">
+  <div class="ambient-light" aria-hidden="true"></div>
+
+  <div id="studio-toast" class="studio-toast hidden" role="status" aria-live="polite">
+    <span class="toast-indicator"></span>
+    <span id="toast-message" class="toast-text">Ready</span>
+  </div>
+
+  <header class="top-bar">
+    <div class="header-left">
+      <a href="/" class="logo space-grotesk">
+        <span class="logo-mark">CC</span>
+        <span>Media Studio</span>
+        <span class="version-chip mono">WASM</span>
+      </a>
+
+      <div class="segmented-control" role="tablist" aria-label="Converter mode">
+        <div class="segment-thumb" id="mode-thumb"></div>
+        <button type="button" class="segment-btn active" id="mode-quick-btn" role="tab" aria-selected="true">Quick</button>
+        <button type="button" class="segment-btn" id="mode-pro-btn" role="tab" aria-selected="false">Pro Studio</button>
+      </div>
+    </div>
+
+    <div class="header-right desktop-only-nav">
+      <nav class="nav-pill" id="header-nav" aria-label="Primary navigation">
+        <div class="nav-pill-thumb" id="nav-thumb"></div>
+        <a href="/" class="nav-link">Downgrader</a>
+        <a href="/converter.html" class="nav-link active-page">Converter</a>
+
+        <div class="nav-dropdown">
+          <button type="button" class="nav-link nav-dropdown-trigger" aria-haspopup="true">
+            <span>Tools</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="nav-dropdown-menu">
+            <div class="dropdown-header-label mono">DOWNLOADABLE TOOLS</div>
+            <a href="/scripts.html" class="dropdown-item">
+              <div class="dropdown-item-top">
+                <strong>CC Comp Duplicator</strong>
+                <span class="dropdown-badge mono">AE JSX</span>
+              </div>
+              <span>Deep comp hierarchy &amp; expression updater</span>
+            </a>
+            <div class="dropdown-item is-disabled" aria-disabled="true">
+              <div class="dropdown-item-top">
+                <strong>More Studio Scripts</strong>
+                <span class="dropdown-badge soon mono">COMING SOON</span>
+              </div>
+              <span>Premiere &amp; After Effects workflow tools</span>
+            </div>
+          </div>
+        </div>
+
+        <a href="https://github.com/AndreaMonzani/cc-downgrader" target="_blank" rel="noopener" class="nav-link">GitHub</a>
+        <a href="https://paypal.me/andremonz99" target="_blank" rel="noopener" class="nav-link support-cta">Support</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="converter-main">
+    <div class="converter-top-bar hero-animate">
+      <div class="status-group">
+        <span class="status-badge">
+          <span class="pulse-dot"></span>
+          100% Client-Side • Zero Upload
+        </span>
+        <span class="compat-badge mono">Limits: 150MB Video / 35MB Img</span>
+      </div>
+
+      <div class="type-tabs" role="tablist">
+        <button type="button" class="type-tab active" data-tab="video">Video &amp; Audio</button>
+        <button type="button" class="type-tab" data-tab="image">Batch Images</button>
+      </div>
+    </div>
+
+    <div class="studio-workspace hero-animate">
+      <section class="workspace-left">
+        <div id="media-dropzone" class="koko-dropzone compact-dropzone" tabindex="0" role="button" aria-label="Drop video or image files">
+          <div class="dropzone-grid" aria-hidden="true"></div>
+          <span class="reticle tl"></span><span class="reticle tr"></span>
+          <span class="reticle bl"></span><span class="reticle br"></span>
+
+          <div class="dropzone-inner">
+            <div class="upload-icon-wrap small-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            </div>
+            <h1 class="space-grotesk converter-title">Drop Video or Images</h1>
+            <p class="hero-subtitle small-sub">Auto-detects media type. Max 150MB per video or 35MB per image (up to 30 batch files).</p>
+            <div class="format-pills mono">
+              <span class="fmt-pill pr">MP4 / MOV / MKV</span>
+              <span class="fmt-pill ae">PNG / JPG / WebP / AVIF</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="video-preview-card" class="preview-card hidden">
+          <div class="preview-stage">
+            <video id="video-player" controls playsinline></video>
+            <div id="burnin-preview-layer" class="burnin-layer" aria-hidden="true">
+              <div id="burnin-tc-badge" class="burnin-badge hidden mono">00:00:00:00</div>
+              <div id="burnin-title-badge" class="burnin-badge hidden">PROJECT_TITLE</div>
+            </div>
+          </div>
+          <div class="preview-meta-bar mono">
+            <span id="meta-resolution">--</span>
+            <span id="meta-duration">--</span>
+            <span id="meta-size">--</span>
+            <button type="button" id="extract-frame-btn" class="mini-action-btn">Extract Frame PNG</button>
+          </div>
+        </div>
+
+        <div id="queue-panel" class="queue-panel hidden">
+          <div class="queue-header">
+            <span class="mono queue-title">QUEUE (<span id="queue-count">0</span>)</span>
+            <button type="button" id="clear-queue-btn" class="text-btn">Clear all</button>
+          </div>
+          <ul id="queue-list" class="queue-list"></ul>
+        </div>
+      </section>
+
+      <aside class="workspace-right">
+        <div id="video-settings-panel" class="settings-panel">
+          <div class="panel-section">
+            <label class="section-label">Quick Presets</label>
+            <div class="preset-grid" id="video-presets">
+              <button type="button" class="preset-card active" data-preset="review">
+                <strong>Client Review</strong>
+                <span class="mono">MP4 • H.264 • 720p/1080p</span>
+              </button>
+              <button type="button" class="preset-card" data-preset="youtube">
+                <strong>Master Web</strong>
+                <span class="mono">MP4 • H.264 • High CRF</span>
+              </button>
+              <button type="button" class="preset-card" data-preset="social">
+                <strong>Social 9:16</strong>
+                <span class="mono">MP4 • 1080x1920 Crop</span>
+              </button>
+              <button type="button" class="preset-card" data-preset="gif">
+                <strong>Animated GIF</strong>
+                <span class="mono">GIF • 15fps • 480px</span>
+              </button>
+              <button type="button" class="preset-card" data-preset="audio">
+                <strong>Audio Only</strong>
+                <span class="mono">MP3 / WAV Extract</span>
+              </button>
+            </div>
+          </div>
+
+          <div id="video-pro-controls" class="pro-controls hidden">
+            <details class="studio-accordion" open>
+              <summary class="space-grotesk">Format &amp; Video Codec</summary>
+              <div class="accordion-body">
+                <div class="field-row">
+                  <div class="field">
+                    <label for="vid-container">Container</label>
+                    <select id="vid-container" class="studio-select mono">
+                      <option value="mp4">MP4 (.mp4)</option>
+                      <option value="mov">QuickTime (.mov)</option>
+                      <option value="webm">WebM (.webm)</option>
+                      <option value="gif">GIF (.gif)</option>
+                      <option value="mp3">Audio MP3 (.mp3)</option>
+                      <option value="wav">Audio WAV (.wav)</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="vid-codec">Video Codec</label>
+                    <select id="vid-codec" class="studio-select mono">
+                      <option value="libx264">H.264 (libx264)</option>
+                      <option value="libvpx">VP8 (WebM)</option>
+                      <option value="copy">Stream Copy (Fast)</option>
+                      <option value="none">No Video (Audio Only)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="field-row">
+                  <div class="field">
+                    <label for="vid-crf">Quality (CRF: <span id="crf-val" class="mono">23</span>)</label>
+                    <input type="range" id="vid-crf" min="16" max="35" value="23" class="studio-range">
+                  </div>
+                  <div class="field">
+                    <label for="vid-fps">Frame Rate</label>
+                    <select id="vid-fps" class="studio-select mono">
+                      <option value="source">Keep Source</option>
+                      <option value="23.976">23.976 fps</option>
+                      <option value="24">24 fps</option>
+                      <option value="25">25 fps</option>
+                      <option value="30">30 fps</option>
+                      <option value="60">60 fps</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="field-row">
+                  <div class="field">
+                    <label for="vid-scale">Resolution</label>
+                    <select id="vid-scale" class="studio-select mono">
+                      <option value="source">Original</option>
+                      <option value="1920:-2">1080p (Width 1920)</option>
+                      <option value="1280:-2">720p (Width 1280)</option>
+                      <option value="1080:1920">Vertical 9:16 (1080x1920)</option>
+                      <option value="1080:1080">Square 1:1 (1080x1080)</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="vid-audio">Audio</label>
+                    <select id="vid-audio" class="studio-select mono">
+                      <option value="aac_192k">AAC 192 kbps</option>
+                      <option value="aac_128k">AAC 128 kbps</option>
+                      <option value="mute">Mute / Strip Audio</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </details>
+
+            <details class="studio-accordion">
+              <summary class="space-grotesk">Trim In / Out</summary>
+              <div class="accordion-body">
+                <div class="field-row">
+                  <div class="field">
+                    <label for="trim-start">Start (HH:MM:SS)</label>
+                    <input type="text" id="trim-start" class="studio-input-box mono" placeholder="00:00:00">
+                  </div>
+                  <div class="field">
+                    <label for="trim-end">End (HH:MM:SS)</label>
+                    <input type="text" id="trim-end" class="studio-input-box mono" placeholder="Full duration">
+                  </div>
+                </div>
+              </div>
+            </details>
+
+            <details class="studio-accordion">
+              <summary class="space-grotesk">Burn-In (Timecode &amp; Title)</summary>
+              <div class="accordion-body">
+                <label class="checkbox-row">
+                  <input type="checkbox" id="burnin-tc-enable">
+                  <span>Enable Timecode Burn-In (Live Preview)</span>
+                </label>
+                <div class="field-row">
+                  <div class="field">
+                    <label for="burnin-tc-pos">TC Position</label>
+                    <select id="burnin-tc-pos" class="studio-select mono">
+                      <option value="bottom-center">Bottom Center</option>
+                      <option value="top-center">Top Center</option>
+                      <option value="bottom-right">Bottom Right</option>
+                      <option value="top-left">Top Left</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="burnin-title-text">Title / Watermark Text</label>
+                    <input type="text" id="burnin-title-text" class="studio-input-box mono" placeholder="e.g. CLIENT REVIEW">
+                  </div>
+                </div>
+                <p class="hint-text">Burn-in preview is shown in real time on the player.</p>
+              </div>
+            </details>
+          </div>
+
+          <div class="action-footer">
+            <div class="progress-wrap hidden" id="video-progress-wrap">
+              <div class="progress-header mono">
+                <span id="progress-label">Loading FFmpeg WASM...</span>
+                <span id="progress-pct">0%</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill" id="progress-fill"></div>
+              </div>
+            </div>
+
+            <div class="btn-group">
+              <button type="button" id="start-video-btn" class="primary-btn space-grotesk" disabled>Convert Video</button>
+              <button type="button" id="cancel-video-btn" class="secondary-btn hidden">Cancel</button>
+            </div>
+
+            <div class="utility-row">
+              <button type="button" id="show-ffmpeg-btn" class="text-btn mono">&lt;/&gt; Show FFmpeg Command</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="image-settings-panel" class="settings-panel hidden">
+          <div class="panel-section">
+            <label class="section-label">Image Output Format</label>
+            <div class="field-row">
+              <div class="field">
+                <label for="img-format">Format</label>
+                <select id="img-format" class="studio-select mono">
+                  <option value="image/webp">WebP (.webp)</option>
+                  <option value="image/jpeg">JPEG (.jpg)</option>
+                  <option value="image/png">PNG (.png)</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="img-quality">Quality (<span id="img-qual-val" class="mono">85%</span>)</label>
+                <input type="range" id="img-quality" min="10" max="100" value="85" class="studio-range">
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="img-max-width">Max Width (px, optional)</label>
+                <input type="number" id="img-max-width" class="studio-input-box mono" placeholder="Original">
+              </div>
+              <div class="field">
+                <label for="img-bg-color">Transparency Fill (JPG)</label>
+                <input type="color" id="img-bg-color" value="#000000" class="studio-color-input">
+              </div>
+            </div>
+          </div>
+
+          <div class="action-footer">
+            <button type="button" id="start-image-btn" class="primary-btn space-grotesk" disabled>Convert &amp; Download</button>
+            <p class="hint-text" style="text-align:center; margin-top:8px;">Multiple images are automatically bundled into a .ZIP archive.</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="ad-sub-container" style="max-width: 1180px;">
+      <ins class="adsbygoogle"
+           style="display:block; width:100%; min-height:90px;"
+           data-ad-client="ca-pub-2940110943660865"
+           data-ad-format="horizontal"
+           data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+  </main>
+
+  <!-- MODAL: FILE SIZE LIMIT REACHED -->
+  <div id="limit-modal" class="modal-overlay hidden" role="dialog" aria-labelledby="limit-modal-title" aria-modal="true">
+    <div class="modal studio-modal support-modal">
+      <button type="button" class="close-modal" id="close-limit-modal" aria-label="Close modal">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <span class="modal-eyebrow mono" style="color: #EF4444;">LIMIT REACHED</span>
+      <h3 id="limit-modal-title" class="space-grotesk">File Exceeds Browser Limit</h3>
+      <p id="limit-modal-desc" class="modal-body-text">
+        This tool runs 100% locally in your browser memory (zero server upload). To prevent browser tab crashes, files are capped at 150 MB for video and 35 MB per image.
+      </p>
+      <div id="limit-file-details" class="metadata-box mono"></div>
+      <div class="modal-actions-row">
+        <button type="button" id="ack-limit-btn" class="primary-btn space-grotesk">Got it</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: SHOW FFMPEG COMMAND -->
+  <div id="ffmpeg-cmd-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal studio-modal">
+      <div class="modal-header">
+        <div>
+          <span class="modal-eyebrow mono">PRO CLI INSPECTOR</span>
+          <h3 class="space-grotesk">Generated FFmpeg Command</h3>
+        </div>
+        <button type="button" class="close-modal" id="close-cmd-modal" aria-label="Close modal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <pre id="ffmpeg-cmd-output" class="code-preview mono"></pre>
+      <button type="button" id="copy-cmd-btn" class="primary-btn space-grotesk" style="margin-top:14px;">Copy Command</button>
+    </div>
+  </div>
+
+  <div class="mobile-bottom-dock">
+    <nav class="mobile-dock-nav" aria-label="Mobile quick links">
+      <a href="/" class="dock-link">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span>Downgrade</span>
+      </a>
+      <a href="/scripts.html" class="dock-link">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span>Tools</span>
+      </a>
+      <a href="https://paypal.me/andremonz99" target="_blank" rel="noopener" class="dock-link highlight">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/></svg>
+        <span>Support</span>
+      </a>
+      <a href="https://github.com/AndreaMonzani/cc-downgrader" target="_blank" rel="noopener" class="dock-link">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        <span>Source</span>
+      </a>
+    </nav>
+  </div>
+
+  <footer>
+    <p>&copy; 2026 Andrea Maria Serghei Monzani &middot; <a href="/" class="footer-link">CC Downgrader</a> &middot; <a href="https://github.com/AndreaMonzani/cc-downgrader" target="_blank" rel="noopener" class="footer-link">MIT Open Source</a></p>
+  </footer>
+
+  <script type="module" src="/src/converter.js"></script>
+</body>
+</html>
