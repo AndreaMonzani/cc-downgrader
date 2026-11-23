@@ -1,18 +1,26 @@
 import './style.css';
-import { processFile } from './core/fileRouter.js';
+import { animate, stagger, inView } from 'motion';
+import anime from 'animejs';
+import { inspectFile, processFile } from './core/fileRouter.js';
 
-// --- ELEMENTI DOM ---
+// --- DOM REFERENCES ---
 const viewHome = document.getElementById('view-home');
 const viewAdvanced = document.getElementById('view-advanced');
-const toggleBtn = document.getElementById('toggle-mode-btn');
+const modeQuickBtn = document.getElementById('mode-quick-btn');
+const modeProBtn = document.getElementById('mode-pro-btn');
+const modeThumb = document.getElementById('mode-thumb');
+
 const dropzoneHome = document.getElementById('dropzone-home');
+const dropzoneIdleState = document.getElementById('dropzone-idle-state');
+const dropzoneTelemetryState = document.getElementById('dropzone-telemetry-state');
 const dropzoneAe = document.getElementById('dropzone-ae');
 const dropzonePr = document.getElementById('dropzone-pr');
 
-const errorOverlay = document.getElementById('error-overlay');
-const errorCountdown = document.getElementById('error-countdown');
+const studioToast = document.getElementById('studio-toast');
+const toastMessage = document.getElementById('toast-message');
 
 const advancedModal = document.getElementById('advanced-modal');
+const advancedModalCard = document.getElementById('advanced-modal-card');
 const coffeeModal = document.getElementById('coffee-modal');
 const adblockModal = document.getElementById('adblock-modal');
 const closeAdblockBtn = document.getElementById('close-adblock');
@@ -20,6 +28,7 @@ const understandAdblockBtn = document.getElementById('understand-adblock-btn');
 
 const metadataBox = document.getElementById('file-metadata');
 const versionSelector = document.getElementById('version-selector');
+const modalVersionThumb = document.getElementById('modal-version-thumb');
 const executeAdvancedBtn = document.getElementById('execute-advanced-btn');
 const closeButtons = document.querySelectorAll('.close-modal');
 
@@ -28,79 +37,229 @@ const trickDetails = document.getElementById('trick-details');
 const customFileNameInput = document.getElementById('custom-file-name');
 const fileExtLabel = document.getElementById('file-ext-label');
 
-// --- STATO GLOBALE ---
+// --- STATE ---
 let isAdvancedMode = false;
 let currentPendingFile = null;
 let currentTargetVersion = null;
 let currentFileExt = '';
-let errorTimer = null;
+let toastTimeout = null;
 
-// --- LOGO CLICK: GLOW & REFRESH ---
-const logoEl = document.querySelector('.logo');
-if (logoEl) {
-  logoEl.addEventListener('click', () => {
-    logoEl.classList.add('logo-click-glow');
-    setTimeout(() => {
-      window.location.reload();
-    }, 350);
+// --- 1. MOTION.DEV ENTRANCE CHOREOGRAPHY ---
+function runEntranceAnimations() {
+  const heroItems = document.querySelectorAll('.hero-animate');
+  if (heroItems.length) {
+    animate(
+      heroItems,
+      {
+        opacity: [0, 1],
+        transform: ['translateY(18px)', 'translateY(0px)']
+      },
+      {
+        duration: 0.65,
+        delay: stagger(0.09),
+        easing: [0.22, 1, 0.36, 1]
+      }
+    );
+  }
+
+  // Scroll-triggered reveals for SEO & Bento Cards
+  inView('.seo-card, .seo-faq-section', (entry) => {
+    animate(
+      entry.target,
+      {
+        opacity: [0, 1],
+        transform: ['translateY(20px)', 'translateY(0px)']
+      },
+      {
+        duration: 0.55,
+        easing: [0.22, 1, 0.36, 1]
+      }
+    );
+  }, { amount: 0.15 });
+}
+
+// --- 2. ANIME.JS DROPZONE PERIMETER BEAM & RETICLES ---
+function initAnimeDropzoneEffects() {
+  const beamRect = document.getElementById('dropzone-beam-rect');
+  if (beamRect) {
+    anime({
+      targets: beamRect,
+      strokeDashoffset: [anime.setDashoffset, 0],
+      easing: 'linear',
+      duration: 3800,
+      loop: true
+    });
+  }
+
+  if (dropzoneHome) {
+    dropzoneHome.addEventListener('mouseenter', () => {
+      anime({
+        targets: '.reticle',
+        scale: [1, 1.15, 1],
+        duration: 380,
+        easing: 'easeOutQuad'
+      });
+    });
+  }
+}
+
+// --- 3. KOKONUTUI PARTICLE BURST ENGINE (ANIME.JS) ---
+function spawnParticles(x, y) {
+  const colors = ['#C084FC', '#818CF8', '#E9D5FF', '#38BDF8'];
+  const count = 16;
+
+  for (let i = 0; i < count; i++) {
+    const particle = document.createElement('span');
+    particle.className = 'koko-particle';
+    particle.style.left = `${x}px`;
+    particle.style.top = `${y}px`;
+    particle.style.backgroundColor = colors[i % colors.length];
+    document.body.appendChild(particle);
+
+    const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.4;
+    const distance = 36 + Math.random() * 48;
+
+    anime({
+      targets: particle,
+      translateX: Math.cos(angle) * distance,
+      translateY: Math.sin(angle) * distance,
+      scale: [1, 0],
+      opacity: [1, 0],
+      duration: 620 + Math.random() * 200,
+      easing: 'easeOutExpo',
+      complete: () => particle.remove()
+    });
+  }
+}
+
+document.querySelectorAll('.particle-trigger').forEach((btn) => {
+  btn.addEventListener('click', (e) => {
+    const rect = btn.getBoundingClientRect();
+    const x = e.clientX || rect.left + rect.width / 2;
+    const y = e.clientY || rect.top + rect.height / 2;
+    spawnParticles(x, y);
+  });
+});
+
+// --- 4. KOKONUTUI SPOTLIGHT BENTO CARDS ---
+document.querySelectorAll('.spotlight-card').forEach((card) => {
+  card.addEventListener('mousemove', (e) => {
+    const rect = card.getBoundingClientRect();
+    card.style.setProperty('--spot-x', `${e.clientX - rect.left}px`);
+    card.style.setProperty('--spot-y', `${e.clientY - rect.top}px`);
+  });
+});
+
+// --- 5. STUDIO TOAST FEEDBACK (NON-BLOCKING) ---
+function showToast(message, isError = false) {
+  if (!studioToast || !toastMessage) return;
+  clearTimeout(toastTimeout);
+
+  toastMessage.textContent = message;
+  studioToast.classList.toggle('is-error', isError);
+  studioToast.classList.remove('hidden');
+
+  animate(
+    studioToast,
+    {
+      opacity: [0, 1],
+      transform: ['translate(-50%, -10px)', 'translate(-50%, 0px)']
+    },
+    { duration: 0.25, easing: 'easeOut' }
+  );
+
+  if (isError && dropzoneHome) {
+    animate(
+      dropzoneHome,
+      {
+        transform: ['translateX(0px)', 'translateX(-7px)', 'translateX(7px)', 'translateX(-4px)', 'translateX(0px)']
+      },
+      { duration: 0.35 }
+    );
+  }
+
+  toastTimeout = setTimeout(() => {
+    animate(
+      studioToast,
+      { opacity: [1, 0], transform: ['translate(-50%, 0px)', 'translate(-50%, -8px)'] },
+      { duration: 0.2 }
+    ).finished.then(() => {
+      studioToast.classList.add('hidden');
+    });
+  }, 3600);
+}
+
+// --- 6. SEGMENTED MODE SWITCHER (MOTION.DEV) ---
+function updateModeThumb(activeBtn) {
+  if (!modeThumb || !activeBtn) return;
+  animate(
+    modeThumb,
+    {
+      width: `${activeBtn.offsetWidth}px`,
+      transform: `translateX(${activeBtn.offsetLeft - 3}px)`
+    },
+    { duration: 0.28, easing: [0.22, 1, 0.36, 1] }
+  );
+}
+
+function setAdvancedMode(enable) {
+  if (isAdvancedMode === enable) return;
+  isAdvancedMode = enable;
+
+  modeQuickBtn.classList.toggle('active', !enable);
+  modeQuickBtn.setAttribute('aria-selected', String(!enable));
+  modeProBtn.classList.toggle('active', enable);
+  modeProBtn.setAttribute('aria-selected', String(enable));
+  updateModeThumb(enable ? modeProBtn : modeQuickBtn);
+
+  const outgoing = enable ? viewHome : viewAdvanced;
+  const incoming = enable ? viewAdvanced : viewHome;
+
+  animate(
+    outgoing,
+    { opacity: [1, 0], transform: ['translateY(0px)', 'translateY(8px)'] },
+    { duration: 0.2 }
+  ).finished.then(() => {
+    outgoing.classList.add('hidden');
+    outgoing.classList.remove('active');
+    incoming.classList.remove('hidden');
+    incoming.classList.add('active');
+    animate(
+      incoming,
+      { opacity: [0, 1], transform: ['translateY(10px)', 'translateY(0px)'] },
+      { duration: 0.32, easing: [0.22, 1, 0.36, 1] }
+    );
   });
 }
 
-// --- 1. CURSORE CUSTOM & SFONDO DINAMICO ---
-const dot = document.getElementById('cursor-dot');
-const ring = document.getElementById('cursor-ring');
-let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
-let ringX = mouseX, ringY = mouseY;
+modeQuickBtn?.addEventListener('click', () => setAdvancedMode(false));
+modeProBtn?.addEventListener('click', () => setAdvancedMode(true));
 
-window.addEventListener('mousemove', (e) => {
-  mouseX = e.clientX; 
-  mouseY = e.clientY;
-  
-  if(dot) {
-    dot.style.left = `${mouseX}px`; 
-    dot.style.top = `${mouseY}px`;
-  }
+// --- 7. TOP NAV PILL HOVER (MOTION.DEV) ---
+const headerNav = document.getElementById('header-nav');
+const navThumb = document.getElementById('nav-thumb');
 
-  document.documentElement.style.setProperty('--mouse-x', `${mouseX}px`);
-  document.documentElement.style.setProperty('--mouse-y', `${mouseY}px`);
-});
+if (headerNav && navThumb) {
+  headerNav.querySelectorAll('.nav-link:not(.support-cta)').forEach((link) => {
+    link.addEventListener('mouseenter', () => {
+      animate(
+        navThumb,
+        {
+          opacity: 1,
+          width: `${link.offsetWidth}px`,
+          transform: `translateX(${link.offsetLeft}px)`
+        },
+        { duration: 0.22, easing: [0.22, 1, 0.36, 1] }
+      );
+    });
+  });
 
-function renderCursor() {
-  ringX += (mouseX - ringX) * 0.15;
-  ringY += (mouseY - ringY) * 0.15;
-  if(ring) {
-    ring.style.left = `${ringX}px`; 
-    ring.style.top = `${ringY}px`;
-  }
-  requestAnimationFrame(renderCursor);
-}
-requestAnimationFrame(renderCursor);
-
-// Hover magnetico per desktop
-document.querySelectorAll('button, a, .split-pane, .dropzone-giant, .nav-link, input').forEach(el => {
-  el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
-  el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
-});
-
-// --- 2. TOGGLE VIEWS (HOME <=> ADVANCED) ---
-function setAdvancedMode(enable) {
-  isAdvancedMode = enable;
-  if(isAdvancedMode) {
-    viewHome.classList.remove('active');
-    viewAdvanced.classList.remove('hidden');
-    setTimeout(() => viewAdvanced.classList.add('active'), 50);
-    toggleBtn.querySelector('.text').innerText = "Back to Quick Drop";
-  } else {
-    viewAdvanced.classList.remove('active');
-    setTimeout(() => viewAdvanced.classList.add('hidden'), 500);
-    viewHome.classList.add('active');
-    toggleBtn.querySelector('.text').innerText = "I'm a pro, let's go to advanced mode!";
-  }
+  headerNav.addEventListener('mouseleave', () => {
+    animate(navThumb, { opacity: 0 }, { duration: 0.18 });
+  });
 }
 
-toggleBtn.addEventListener('click', () => setAdvancedMode(!isAdvancedMode));
-
-// --- SWIPE GESTURE DETECTOR (MOBILE) ---
+// --- 8. MOBILE SWIPE GESTURE ---
 let touchStartX = 0;
 let touchStartY = 0;
 
@@ -110,284 +269,320 @@ window.addEventListener('touchstart', (e) => {
 }, { passive: true });
 
 window.addEventListener('touchend', (e) => {
-  const touchEndX = e.changedTouches[0].screenX;
-  const touchEndY = e.changedTouches[0].screenY;
-  
-  const diffX = touchEndX - touchStartX;
-  const diffY = touchEndY - touchStartY;
-
-  if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 60) {
-    if (diffX < 0 && !isAdvancedMode) {
-      setAdvancedMode(true);
-    } else if (diffX > 0 && isAdvancedMode) {
-      setAdvancedMode(false);
-    }
+  const diffX = e.changedTouches[0].screenX - touchStartX;
+  const diffY = e.changedTouches[0].screenY - touchStartY;
+  if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 65) {
+    if (diffX < 0 && !isAdvancedMode) setAdvancedMode(true);
+    if (diffX > 0 && isAdvancedMode) setAdvancedMode(false);
   }
 }, { passive: true });
 
-// --- 3. BUBBLE NAV MODALE (VERSION SELECTOR) ---
-function renderModalBubbleNav(type) {
-  versionSelector.innerHTML = '';
-  const options = type === 'ae' ? 
-    [{ val: '24', label: 'AE 2024' }, { val: '23', label: 'AE 2023' }] : 
-    [{ val: '1', label: 'Legacy Auto (Universal)' }];
-  
-  options.forEach((opt, idx) => {
-    const a = document.createElement('a');
-    a.href = '#'; 
-    a.dataset.val = opt.val; 
-    a.innerText = opt.label;
-    
-    if(idx === 0) { 
-      a.classList.add('active'); 
-      currentTargetVersion = opt.val; 
-    }
-    
-    a.addEventListener('click', (e) => {
-      e.preventDefault();
-      versionSelector.querySelectorAll('a').forEach(n => n.classList.remove('active'));
-      a.classList.add('active');
-      currentTargetVersion = a.dataset.val;
-      updateModalBubble();
-    });
-    versionSelector.appendChild(a);
-  });
-  
-  setTimeout(updateModalBubble, 50);
+// --- 9. DRAG & DROP HANDLERS ---
+function isValidProjectFile(file) {
+  const ext = file.name.split('.').pop().toLowerCase();
+  return ['prproj', 'aep', 'aepx'].includes(ext) ? ext : null;
 }
 
-function updateModalBubble() {
-  const activeLink = versionSelector.querySelector('a.active');
-  const bubble = document.querySelector('.modal-bubble');
-  if(activeLink && bubble) {
-    bubble.style.width = `${activeLink.offsetWidth}px`;
-    bubble.style.transform = `translateX(${activeLink.offsetLeft}px)`;
-  }
-}
+function setupDropzone(el, onFileAccepted) {
+  if (!el) return;
 
-// --- 4. BUBBLE HOVER PER LA TOP NAV (HEADER) ---
-const headerNav = document.getElementById('header-nav');
-const topBubble = document.querySelector('.top-bubble');
-
-if(headerNav && topBubble) {
-  headerNav.querySelectorAll('a').forEach(link => {
-    link.addEventListener('mouseenter', () => {
-      topBubble.style.opacity = '1';
-      topBubble.style.width = `${link.offsetWidth}px`;
-      topBubble.style.transform = `translateX(${link.offsetLeft}px)`;
-    });
+  el.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    el.classList.add('drag-over');
   });
 
-  headerNav.addEventListener('mouseleave', () => {
-    topBubble.style.opacity = '0';
+  el.addEventListener('dragleave', () => {
+    el.classList.remove('drag-over');
   });
-}
 
-// --- 5. ERROR STATE & COUNTDOWN ---
-function showErrorState() {
-  errorOverlay.classList.remove('hidden');
-  let count = 5;
-  errorCountdown.innerText = count;
-  clearInterval(errorTimer);
-  
-  errorTimer = setInterval(() => {
-    count--;
-    errorCountdown.innerText = count;
-    if(count <= 0) {
-      clearInterval(errorTimer);
-      errorOverlay.classList.add('hidden');
-    }
-  }, 1000);
-}
-
-// --- 6. DRAG & DROP ENGINE ---
-function setupDropzone(el, onDropCb) {
-  if(!el) return;
-  
-  el.addEventListener('dragover', e => { e.preventDefault(); el.classList.add('drag-over'); });
-  el.addEventListener('dragleave', () => el.classList.remove('drag-over'));
-  el.addEventListener('drop', e => {
+  el.addEventListener('drop', (e) => {
     e.preventDefault();
     el.classList.remove('drag-over');
-    const file = e.dataTransfer.files[0];
-    if(!file) return;
+    const file = e.dataTransfer?.files?.[0];
+    if (!file) return;
 
-    const ext = file.name.split('.').pop().toLowerCase();
-    if(!['prproj', 'aep', 'aepx'].includes(ext)) {
-      showErrorState();
+    const ext = isValidProjectFile(file);
+    if (!ext) {
+      showToast('Unsupported format. Please drop .prproj, .aep, or .aepx files.', true);
       return;
     }
-    onDropCb(file, ext);
+    onFileAccepted(file, ext);
   });
 
-  el.addEventListener('click', () => {
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = '.prproj, .aep, .aepx';
-    fileInput.onchange = (evt) => {
-      const file = evt.target.files[0];
-      if(!file) return;
-      const ext = file.name.split('.').pop().toLowerCase();
-      if(!['prproj', 'aep', 'aepx'].includes(ext)) {
-        showErrorState();
+  const openPicker = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.prproj,.aep,.aepx';
+    input.onchange = (evt) => {
+      const file = evt.target.files?.[0];
+      if (!file) return;
+      const ext = isValidProjectFile(file);
+      if (!ext) {
+        showToast('Unsupported format. Please select .prproj, .aep, or .aepx files.', true);
         return;
       }
-      onDropCb(file, ext);
+      onFileAccepted(file, ext);
     };
-    fileInput.click();
+    input.click();
+  };
+
+  el.addEventListener('click', openPicker);
+  el.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      openPicker();
+    }
   });
 }
 
-// Quick Drop su HOME
+// Quick Drop Action
 setupDropzone(dropzoneHome, async (file, ext) => {
   const isAe = ['aep', 'aepx'].includes(ext);
-  const version = isAe ? "24" : "1";
-  await triggerEngine(file, isAe ? version : null, !isAe ? version : null);
+  await triggerEngine(file, isAe ? '24' : null, !isAe ? '1' : null);
 });
 
-// Drop su ADVANCED (AE Side)
+// Pro Studio AE Dropzone
 setupDropzone(dropzoneAe, (file, ext) => {
   const isPr = ext === 'prproj';
   openAdvancedModal(file, isPr ? 'pr' : 'ae', isPr);
 });
 
-// Drop su ADVANCED (PR Side)
+// Pro Studio PR Dropzone
 setupDropzone(dropzonePr, (file, ext) => {
   const isAe = ['aep', 'aepx'].includes(ext);
   openAdvancedModal(file, isAe ? 'ae' : 'pr', isAe);
 });
 
-// --- 7. MODAL & ESECUZIONE ---
-function openAdvancedModal(file, actualType, wasTricked = false) {
+// --- 10. PRO STUDIO MODAL & VERSION PILLS ---
+function updateModalVersionThumb(activeBtn) {
+  if (!modalVersionThumb || !activeBtn) return;
+  animate(
+    modalVersionThumb,
+    {
+      width: `${activeBtn.offsetWidth}px`,
+      transform: `translateX(${activeBtn.offsetLeft - 4}px)`
+    },
+    { duration: 0.24, easing: [0.22, 1, 0.36, 1] }
+  );
+}
+
+function renderModalVersions(type) {
+  versionSelector.innerHTML = '';
+  const options = type === 'ae'
+    ? [
+        { val: '26', label: 'AE 2026' },
+        { val: '25', label: 'AE 2025' },
+        { val: '24', label: 'AE 2024' },
+        { val: '23', label: 'AE 2023' },
+        { val: '22', label: 'AE 2022' }
+      ]
+    : [
+        { val: '1', label: 'Universal Legacy' },
+        { val: '43', label: 'PR 2025' },
+        { val: '42', label: 'PR 2024' },
+        { val: '41', label: 'PR 2023' }
+      ];
+
+  options.forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'ver-pill-btn';
+    btn.dataset.val = opt.val;
+    btn.textContent = opt.label;
+
+    const defaultIdx = type === 'ae' ? 2 : 0; // Default AE 2024 or PR Universal Legacy
+    if (idx === defaultIdx) {
+      btn.classList.add('active');
+      currentTargetVersion = opt.val;
+    }
+
+    btn.addEventListener('click', () => {
+      versionSelector.querySelectorAll('.ver-pill-btn').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentTargetVersion = btn.dataset.val;
+      updateModalVersionThumb(btn);
+    });
+
+    versionSelector.appendChild(btn);
+  });
+
+  requestAnimationFrame(() => {
+    const active = versionSelector.querySelector('.ver-pill-btn.active');
+    updateModalVersionThumb(active);
+  });
+}
+
+function openModalAnimated(overlay) {
+  overlay.classList.remove('hidden');
+  const card = overlay.querySelector('.studio-modal');
+  if (card) {
+    animate(
+      card,
+      { opacity: [0, 1], transform: ['scale(0.96) translateY(10px)', 'scale(1) translateY(0px)'] },
+      { duration: 0.24, easing: [0.22, 1, 0.36, 1] }
+    );
+  }
+}
+
+function closeModalAnimated(overlay) {
+  const card = overlay.querySelector('.studio-modal');
+  if (card) {
+    animate(
+      card,
+      { opacity: [1, 0], transform: ['scale(1)', 'scale(0.97)'] },
+      { duration: 0.16 }
+    ).finished.then(() => overlay.classList.add('hidden'));
+  } else {
+    overlay.classList.add('hidden');
+  }
+}
+
+async function openAdvancedModal(file, actualType, autoSwitched = false) {
   currentPendingFile = file;
-  
+
   const lastDotIdx = file.name.lastIndexOf('.');
   const baseName = lastDotIdx !== -1 ? file.name.substring(0, lastDotIdx) : file.name;
   currentFileExt = lastDotIdx !== -1 ? file.name.substring(lastDotIdx) : (actualType === 'ae' ? '.aep' : '.prproj');
-  
-  customFileNameInput.value = `${baseName}_downgraded`;
-  fileExtLabel.innerText = currentFileExt;
 
-  if (wasTricked) {
-    const typeName = actualType === 'ae' ? 'After Effects (.aep)' : 'Premiere Pro (.prproj)';
-    trickDetails.innerText = `You dropped this into the wrong box, but I auto-detected it as ${typeName}!`;
+  customFileNameInput.value = `${baseName}_downgraded`;
+  fileExtLabel.textContent = currentFileExt;
+
+  if (autoSwitched) {
+    const label = actualType === 'ae' ? 'After Effects' : 'Premiere Pro';
+    trickDetails.textContent = `Auto-routed to ${label} engine based on file header signature.`;
     trickWarning.classList.remove('hidden');
   } else {
     trickWarning.classList.add('hidden');
   }
 
-  const sizeMb = (file.size / (1024*1024)).toFixed(2);
-  const date = new Date(file.lastModified).toLocaleString();
+  const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
+  let detectedInfo = 'Inspecting header...';
+
+  try {
+    const info = await inspectFile(file);
+    detectedInfo = info.detectedFullLabel;
+  } catch {
+    detectedInfo = actualType === 'ae' ? 'After Effects Binary' : 'Premiere Pro XML';
+  }
+
   metadataBox.innerHTML = `
-    <strong>Original Name:</strong> ${file.name}<br>
-    <strong>Size:</strong> ${sizeMb} MB | <strong>Modified:</strong> ${date}
+    <strong>Source File:</strong> ${file.name}<br>
+    <strong>Detected Build:</strong> ${detectedInfo}<br>
+    <strong>Payload Size:</strong> ${sizeMb} MB
   `;
 
-  renderModalBubbleNav(actualType);
-  advancedModal.classList.remove('hidden');
+  renderModalVersions(actualType);
+  openModalAnimated(advancedModal);
 }
 
-closeButtons.forEach(btn => btn.addEventListener('click', () => {
-  advancedModal.classList.add('hidden');
-  coffeeModal.classList.add('hidden');
-  adblockModal.classList.add('hidden');
-}));
+closeButtons.forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const overlay = btn.closest('.modal-overlay');
+    if (overlay) closeModalAnimated(overlay);
+  });
+});
 
-if (closeAdblockBtn) closeAdblockBtn.addEventListener('click', () => adblockModal.classList.add('hidden'));
-if (understandAdblockBtn) understandAdblockBtn.addEventListener('click', () => adblockModal.classList.add('hidden'));
+closeAdblockBtn?.addEventListener('click', () => closeModalAnimated(adblockModal));
+understandAdblockBtn?.addEventListener('click', () => closeModalAnimated(adblockModal));
 
-executeAdvancedBtn.addEventListener('click', async () => {
-  advancedModal.classList.add('hidden');
+executeAdvancedBtn?.addEventListener('click', async () => {
+  if (!currentPendingFile) return;
+  closeModalAnimated(advancedModal);
+
   const ext = currentPendingFile.name.split('.').pop().toLowerCase();
   const isAe = ['aep', 'aepx'].includes(ext);
-  
-  const aeVer = isAe ? currentTargetVersion : null;
-  const prVer = !isAe ? currentTargetVersion : null;
-  
-  let chosenName = customFileNameInput.value.trim();
-  if (!chosenName) chosenName = "project_downgraded";
+
+  let chosenName = customFileNameInput.value.trim() || 'project_downgraded';
   if (!chosenName.toLowerCase().endsWith(currentFileExt.toLowerCase())) {
     chosenName += currentFileExt;
   }
 
-  await triggerEngine(currentPendingFile, aeVer, prVer, chosenName);
+  await triggerEngine(
+    currentPendingFile,
+    isAe ? currentTargetVersion : null,
+    !isAe ? currentTargetVersion : null,
+    chosenName
+  );
 });
 
-// --- 8. CONVERSIONE E DONAZIONI ---
+// --- 11. CONVERSION EXECUTION & TELEMETRY ---
 async function triggerEngine(file, aeVersion, prVersion, customOutputName = null) {
-  if(ring) ring.style.borderColor = "#08B2E3";
-  document.body.style.cursor = "wait";
+  const startTime = performance.now();
 
   try {
     const result = await processFile(file, { aeVersion, prVersion });
-    
+    const elapsedMs = Math.max(4, Math.round(performance.now() - startTime));
     const downloadName = customOutputName || result.filename;
 
+    const url = URL.createObjectURL(result.blob);
     const a = document.createElement('a');
-    a.href = URL.createObjectURL(result.blob);
+    a.href = url;
     a.download = downloadName;
     a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
 
-    let count = parseInt(localStorage.getItem('downgrade_count') || '0');
-    count++;
-    localStorage.setItem('downgrade_count', count.toString());
+    // Update Home Dropzone Telemetry Card
+    if (dropzoneIdleState && dropzoneTelemetryState) {
+      document.getElementById('tel-filename').textContent = downloadName;
+      document.getElementById('tel-from').textContent = result.sourceVersion;
+      document.getElementById('tel-to').textContent = result.targetVersion;
+      document.getElementById('tel-sub').textContent = `Patched locally in ${elapsedMs}ms. Drop another file anytime.`;
 
-    if(count % 3 === 0) {
-      setTimeout(() => coffeeModal.classList.remove('hidden'), 1000);
+      dropzoneIdleState.classList.add('hidden');
+      dropzoneTelemetryState.classList.remove('hidden');
+
+      anime({
+        targets: dropzoneTelemetryState,
+        scale: [0.95, 1],
+        opacity: [0, 1],
+        duration: 420,
+        easing: 'easeOutExpo'
+      });
+    }
+
+    const dzRect = dropzoneHome?.getBoundingClientRect();
+    if (dzRect) {
+      spawnParticles(dzRect.left + dzRect.width / 2, dzRect.top + dzRect.height / 2);
+    }
+
+    showToast(`Patched ${result.sourceVersion} → ${result.targetVersion} (${elapsedMs}ms)`);
+
+    const count = parseInt(localStorage.getItem('downgrade_count') || '0', 10) + 1;
+    localStorage.setItem('downgrade_count', String(count));
+    if (count % 3 === 0) {
+      setTimeout(() => openModalAnimated(coffeeModal), 900);
     }
   } catch (error) {
     console.error(error);
-    alert("Conversion error: " + error.message);
-  } finally {
-    if(ring) ring.style.borderColor = "rgba(207, 150, 253, 0.5)";
-    document.body.style.cursor = "default";
+    showToast(error.message || 'Failed to patch project file.', true);
   }
 }
 
-// --- 9. COOKIE BANNER & GA4 CONSENT ---
-const cookieBanner = document.getElementById('cookie-banner');
-
-if (!localStorage.getItem('cookies_accepted')) {
-  document.getElementById('accept-cookies').addEventListener('click', () => {
-    localStorage.setItem('cookies_accepted', 'true');
-    if (cookieBanner) cookieBanner.style.display = 'none';
-    
-    if (typeof window.gtag === 'function') {
-      window.gtag('consent', 'update', {
-        'analytics_storage': 'granted'
-      });
-    }
-  });
-} else {
-  if (cookieBanner) cookieBanner.style.display = 'none';
-  if (typeof window.gtag === 'function') {
-    window.gtag('consent', 'update', {
-      'analytics_storage': 'granted'
-    });
-  }
-}
-
-// --- 10. POLITE ADBLOCK DETECTOR ---
+// --- 12. POLITE ADBLOCK DETECTOR ---
 function detectAdBlock() {
-  const adTest = document.createElement('div');
-  adTest.innerHTML = '&nbsp;';
-  adTest.className = 'adsbygoogle ad-zone ad-space google-ad';
-  adTest.style.position = 'absolute';
-  adTest.style.top = '-9999px';
-  adTest.style.left = '-9999px';
-  document.body.appendChild(adTest);
+  const probe = document.createElement('div');
+  probe.innerHTML = '&nbsp;';
+  probe.className = 'adsbygoogle ad-zone ad-space google-ad';
+  probe.style.position = 'absolute';
+  probe.style.top = '-9999px';
+  document.body.appendChild(probe);
 
   setTimeout(() => {
-    const isBlocked = adTest.offsetHeight === 0 || 
-                      window.adsbygoogle === undefined || 
-                      adTest.clientHeight === 0;
-    document.body.removeChild(adTest);
+    const isBlocked = probe.offsetHeight === 0 || window.adsbygoogle === undefined;
+    document.body.removeChild(probe);
 
     if (isBlocked && !sessionStorage.getItem('adblock_dismissed')) {
-      adblockModal.classList.remove('hidden');
+      openModalAnimated(adblockModal);
       sessionStorage.setItem('adblock_dismissed', 'true');
     }
-  }, 1200);
+  }, 1400);
 }
+
+// --- INITIALIZE ---
+window.addEventListener('DOMContentLoaded', () => {
+  updateModeThumb(modeQuickBtn);
+  runEntranceAnimations();
+  initAnimeDropzoneEffects();
+});
 
 window.addEventListener('load', detectAdBlock);
